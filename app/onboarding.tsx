@@ -20,10 +20,8 @@ export const slides = [
   {
     id: 1,
     title: "Discover Amazing Events",
-    description:
-      "Find concerts, workshops and local meetups near you.",
-    image:
-      "https://images.unsplash.com/photo-1501386761578-eac5c94b800a",
+    description: "Find concerts, workshops and local meetups near you.",
+    image: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a",
   },
 
   // ✅ CUSTOM SECOND SLIDE
@@ -31,17 +29,14 @@ export const slides = [
     id: 2,
     type: "custom",
     title: "Fast & Secure Booking",
-    description:
-      "Reserve your spot in seconds with secure checkout.",
+    description: "Reserve your spot in seconds with secure checkout.",
   },
 
   {
     id: 3,
     title: "Digital Entry",
-    description:
-      "Use your QR code ticket for quick and easy event access.",
-    image:
-      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac",
+    description: "Use your QR code ticket for quick and easy event access.",
+    image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac",
   },
 ];
 
@@ -70,7 +65,7 @@ export default function OnboardingScreen() {
 
   /* -------------------- CUSTOM SLIDE UI -------------------- */
 
-    const renderHtmlSlide = () => {
+  const renderHtmlSlide = () => {
     return (
       <View style={styles.htmlWrapper}>
         {/* Background glow */}
@@ -83,9 +78,7 @@ export default function OnboardingScreen() {
             <View style={styles.ticketTop}>
               <View>
                 <Text style={styles.admit}>ADMIT ONE</Text>
-                <Text style={styles.eventTitle}>
-                  Midnight Jazz Festival
-                </Text>
+                <Text style={styles.eventTitle}>Midnight Jazz Festival</Text>
               </View>
 
               <View style={styles.ticketIconBox}>
@@ -100,16 +93,12 @@ export default function OnboardingScreen() {
             <View style={styles.ticketRow}>
               <View style={styles.ticketCol}>
                 <Text style={styles.label}>Date</Text>
-                <Text style={styles.value}>
-                  Oct 24, 2024
-                </Text>
+                <Text style={styles.value}>Oct 24, 2024</Text>
               </View>
 
               <View style={styles.ticketColRight}>
                 <Text style={styles.label}>Seat</Text>
-                <Text style={styles.value}>
-                  Row B, 12
-                </Text>
+                <Text style={styles.value}>Row B, 12</Text>
               </View>
             </View>
 
@@ -119,52 +108,34 @@ export default function OnboardingScreen() {
           {/* Payment Card */}
           <View style={styles.paymentCard}>
             <View style={styles.checkCircle}>
-              <MaterialIcons
-                name="check-circle"
-                size={20}
-                color="#fff"
-              />
+              <MaterialIcons name="check-circle" size={20} color="#fff" />
             </View>
 
             <View>
-              <Text style={styles.paymentTitle}>
-                Payment Sent
-              </Text>
-              <Text style={styles.paymentSub}>
-                $89.00 USD
-              </Text>
+              <Text style={styles.paymentTitle}>Payment Sent</Text>
+              <Text style={styles.paymentSub}>$89.00 USD</Text>
             </View>
           </View>
 
           {/* Security badge */}
           <View style={styles.securityBadge}>
-            <MaterialIcons
-              name="security"
-              size={16}
-              color="#6C63FF"
-            />
-            <Text style={styles.secureText}>
-              Secure
-            </Text>
+            <MaterialIcons name="security" size={16} color="#6C63FF" />
+            <Text style={styles.secureText}>Secure</Text>
           </View>
         </View>
 
         {/* TEXT SECTION */}
         <View style={styles.textSection}>
-          <Text style={styles.title}>
-            Fast & Secure Booking
-          </Text>
+          <Text style={styles.title}>Fast & Secure Booking</Text>
 
           <Text style={styles.desc}>
-            Reserve your spot in seconds with our
-            streamlined checkout. Your tickets are always
-            safe in your digital wallet.
+            Reserve your spot in seconds with our streamlined checkout. Your
+            tickets are always safe in your digital wallet.
           </Text>
         </View>
       </View>
     );
   };
-
 
   /* -------------------- RENDER -------------------- */
 
@@ -208,9 +179,7 @@ export default function OnboardingScreen() {
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
         onMomentumScrollEnd={(event) => {
-          const index = Math.round(
-            event.nativeEvent.contentOffset.x / width
-          );
+          const index = Math.round(event.nativeEvent.contentOffset.x / width);
           setCurrentIndex(index);
         }}
         renderItem={({ item }) => (
@@ -230,12 +199,8 @@ export default function OnboardingScreen() {
                 </View>
 
                 <View style={styles.content}>
-                  <Text style={styles.title}>
-                    {item.title}
-                  </Text>
-                  <Text style={styles.description}>
-                    {item.description}
-                  </Text>
+                  <Text style={styles.title}>{item.title}</Text>
+                  <Text style={styles.description}>{item.description}</Text>
                 </View>
               </>
             )}
@@ -248,24 +213,15 @@ export default function OnboardingScreen() {
         {slides.map((_, index) => (
           <View
             key={index}
-            style={[
-              styles.dot,
-              currentIndex === index &&
-                styles.activeDot,
-            ]}
+            style={[styles.dot, currentIndex === index && styles.activeDot]}
           />
         ))}
       </View>
 
       {/* Button */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleNext}
-      >
+      <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>
-          {currentIndex === slides.length - 1
-            ? "Get Started"
-            : "Continue"}
+          {currentIndex === slides.length - 1 ? "Get Started" : "Continue"}
         </Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -284,18 +240,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: "center",
   },
-    visualSection: {
+  visualSection: {
     height: 400,
     width,
     alignItems: "center",
     position: "relative",
   },
- ticketTop: {
+  ticketTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
   },
-    admit: {
+  admit: {
     fontSize: 11,
     letterSpacing: 2,
     color: "#6B7280",
@@ -387,7 +343,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-securityBadge: {
+  securityBadge: {
     position: "absolute",
     top: 10,
     right: 10,
