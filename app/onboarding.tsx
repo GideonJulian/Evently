@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Dimensions,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -63,6 +64,14 @@ export default function OnboardingScreen() {
     });
   };
 
+  const handleSkip = () => { 
+    completeOnboarding();
+    console.log('complete')
+  }
+  const compeleteOnboarding = async () => {
+    await AsyncStorage.setItem("hasSeenOnboarding", "true");
+    router.replace("/(auth)/login");
+  };
   /* -------------------- CUSTOM SLIDE UI -------------------- */
 
   const renderHtmlSlide = () => {
@@ -142,7 +151,7 @@ export default function OnboardingScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity
           disabled={currentIndex === 0}
           onPress={() => {
@@ -165,10 +174,10 @@ export default function OnboardingScreen() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={completeOnboarding}>
+        <TouchableOpacity onPress={handleSkip}>
           <Text style={styles.skip}>Skip</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {/* Slides */}
       <FlatList

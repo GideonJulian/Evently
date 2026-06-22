@@ -6,7 +6,7 @@ import { ActivityIndicator, View } from "react-native";
 export default function Index() {
   useEffect(() => {
     checkUser();
-    // resetOnboarding()
+    resetOnboarding()
   }, []);
   const resetOnboarding = async () => {
     await AsyncStorage.removeItem("hasSeenOnboarding");
