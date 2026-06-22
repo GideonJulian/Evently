@@ -11,38 +11,44 @@ import {
 } from "react-native";
 
 import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialIcons } from "@expo/vector-icons";
+import { supabase } from "../../src/lib/supabase";
 
 export default function LoginScreen() {
-  //  ---------------- FORM STATE (API READY) ----------------
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
-  /// Login Handler (API READY)
-
   const handleLogin = async () => {
+    if (!email || !password) return;
+
     try {
       setLoading(true);
-      //  CONNECT YOUR API LATER
 
-      console.log({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      await AsyncStorage.setItem("isAuthenticated", "true");
+      if (error) {
+        console.log("Login error:", error.message);
+        return;
+      }
 
-      router.push("/(tabs)/home");
+      if (data.session) {
+        router.replace("/(tabs)/home");
+      }
     } catch (err) {
-      console.log(err);
+      console.log("Unexpected error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
+// dncKDwA71wMohmOR
+
+// https://cjmbxizvwtbkmndiemxk.supabase.co/rest/v1/id
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.wrapper}>

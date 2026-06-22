@@ -6,50 +6,53 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  Dimensions,
   ScrollView,
 } from "react-native";
-import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MaterialIcons } from "@expo/vector-icons";
 
-const { width } = Dimensions.get("window");
+import { router } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
+import { supabase } from "../../src/lib/supabase";
 
 export default function RegisterScreen() {
-  /* ---------------- FORM STATE (API READY) ---------------- */
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [agree, setAgree] = useState(false);
   const [loading, setLoading] = useState(false);
+const handleRegister = async () => {
+  if (!email || !password || !name) return;
+  if (!agree) return;
 
-  /* ---------------- SUBMIT HANDLER (HOOK API HERE) ---------------- */
-  const handleRegister = async () => {
-    if (!agree) return;
+  try {
+    setLoading(true);
 
-    try {
-      setLoading(true);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: name,
+        },
+      },
+    });
 
-      // 🔥 HERE YOU WILL CONNECT YOUR API LATER
-      // Example:
-      // await api.register({ name, email, password })
-
-      console.log({
-        name,
-        email,
-        password,
-      });
-
-      await AsyncStorage.setItem("isAuthenticated", "true");
-
-      router.replace("/(tabs)/home");
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+    if (error) {
+      console.log("Register error:", error.message);
+      return;
     }
-  };
+
+    // IMPORTANT:
+    // Supabase may or may not auto-login depending on settings
+    if (data.user) {
+      router.replace("/(auth)/login");
+    }
+  } catch (err) {
+    console.log("Unexpected error:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <SafeAreaView style={styles.container}>
@@ -171,7 +174,7 @@ export default function RegisterScreen() {
         <View style={styles.socialRow}>
           <TouchableOpacity style={styles.socialBtn}>
             <MaterialIcons
-              name="google"
+              name="mail"
               size={20}
               color="#111"
             />

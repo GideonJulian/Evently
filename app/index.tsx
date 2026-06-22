@@ -1,37 +1,48 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
+import { supabase } from "../src/lib/supabase";
 
 export default function Index() {
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    checkUser();
-    resetOnboarding()
+    init();
   }, []);
-  const resetOnboarding = async () => {
-    await AsyncStorage.removeItem("hasSeenOnboarding");
-    router.replace("/onboarding");
-  };
-  const checkUser = async () => {
-    const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
 
-    // 🔥 Replace this with real auth later (Firebase / Supabase / JWT)
-    const isAuthenticated = false;
+  const init = async () => {
+    try {
+      const hasSeenOnboarding = await AsyncStorage.getItem(
+        "hasSeenOnboarding"
+      );
 
-    // 1. If user is logged in → go home
-    if (isAuthenticated) {
-      router.replace("/(tabs)/home");
-      return;
-    }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    // 2. If user has NOT seen onboarding → show onboarding
-    if (!hasSeenOnboarding) {
+      const isLoggedIn = !!session;
+
+      // 1. FIRST TIME USER
+      if (!hasSeenOnboarding) {
+        router.replace("/onboarding");
+        return;
+      }
+
+      // 2. LOGGED IN USER
+      if (isLoggedIn) {
+        router.replace("/(tabs)/home");
+        return;
+      }
+
+      // 3. ONBOARDED BUT NOT LOGGED IN
+      router.replace("/(auth)/login");
+    } catch (err) {
+      console.log("Init error:", err);
       router.replace("/onboarding");
-      return;
+    } finally {
+      setLoading(false);
     }
-
-    // 3. If onboarding is done but NOT logged in → go auth
-    router.replace("/(auth)/register");
   };
 
   return (

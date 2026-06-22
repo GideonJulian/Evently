@@ -4,7 +4,7 @@ import {
   MaterialIcons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-
+import "react-native-url-polyfill/auto";
 export default function TabsLayout() {
   return (
     <Tabs
