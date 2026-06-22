@@ -8,14 +8,12 @@ export default function Index() {
     checkUser();
     // resetOnboarding()
   }, []);
-const resetOnboarding = async () => {
-  await AsyncStorage.removeItem("hasSeenOnboarding");
-  router.replace("/onboarding");
-};
+  const resetOnboarding = async () => {
+    await AsyncStorage.removeItem("hasSeenOnboarding");
+    router.replace("/onboarding");
+  };
   const checkUser = async () => {
-    const hasSeenOnboarding = await AsyncStorage.getItem(
-      "hasSeenOnboarding"
-    );
+    const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
 
     // 🔥 Replace this with real auth later (Firebase / Supabase / JWT)
     const isAuthenticated = false;
