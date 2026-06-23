@@ -46,9 +46,9 @@ export default function LoginScreen() {
     }
   };
 
-// dncKDwA71wMohmOR
+  // dncKDwA71wMohmOR
 
-// https://cjmbxizvwtbkmndiemxk.supabase.co/rest/v1/id
+  // https://cjmbxizvwtbkmndiemxk.supabase.co/rest/v1/id
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.wrapper}>
@@ -158,11 +158,7 @@ export default function LoginScreen() {
             Don't have an account?{" "}
             <Text
               style={styles.footerLink}
-              onPress={() =>
-                router.push(
-                  "/(auth)/register"
-                )
-              }
+              onPress={() => router.push("/(auth)/register")}
             >
               Sign Up
             </Text>
