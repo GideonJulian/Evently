@@ -12,10 +12,9 @@ export default function Index() {
   }, []);
 
   const init = async () => {
+    // await AsyncStorage.removeItem("hasSeenOnboarding");
     try {
-      const hasSeenOnboarding = await AsyncStorage.getItem(
-        "hasSeenOnboarding"
-      );
+      const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
 
       const {
         data: { session },
