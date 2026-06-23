@@ -20,48 +20,46 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [agree, setAgree] = useState(false);
   const [loading, setLoading] = useState(false);
-const handleRegister = async () => {
-  if (!email || !password || !name) return;
-  if (!agree) return;
+  const handleRegister = async () => {
+    if (!email || !password || !name) return;
+    if (!agree) return;
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: name,
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
         },
-      },
-    });
+      });
 
-    if (error) {
-      console.log("Register error:", error.message);
-      return;
-    }
+      if (error) {
+        console.log("Register error:", error.message);
+        return;
+      }
 
-    // IMPORTANT:
-    // Supabase may or may not auto-login depending on settings
-    if (data.user) {
-      router.replace("/(auth)/login");
+      // IMPORTANT:
+      // Supabase may or may not auto-login depending on settings
+      if (data.user) {
+        router.replace("/(auth)/login");
+      }
+    } catch (err) {
+      console.log("Unexpected error:", err);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.log("Unexpected error:", err);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.wrapper}>
         {/* HEADER */}
         <View style={styles.header}>
-          <Text style={styles.title}>
-            Create Account
-          </Text>
+          <Text style={styles.title}>Create Account</Text>
 
           <Text style={styles.subtitle}>
             Join Evently to discover and book unforgettable experiences.
@@ -107,17 +105,11 @@ const handleRegister = async () => {
               />
 
               <TouchableOpacity
-                onPress={() =>
-                  setShowPassword(!showPassword)
-                }
+                onPress={() => setShowPassword(!showPassword)}
                 style={styles.eyeBtn}
               >
                 <MaterialIcons
-                  name={
-                    showPassword
-                      ? "visibility-off"
-                      : "visibility"
-                  }
+                  name={showPassword ? "visibility-off" : "visibility"}
                   size={20}
                   color="#6B7280"
                 />
@@ -129,31 +121,17 @@ const handleRegister = async () => {
           <View style={styles.termsRow}>
             <TouchableOpacity
               onPress={() => setAgree(!agree)}
-              style={[
-                styles.checkbox,
-                agree && styles.checkboxActive,
-              ]}
+              style={[styles.checkbox, agree && styles.checkboxActive]}
             />
             <Text style={styles.termsText}>
-              I agree to the{" "}
-              <Text style={styles.link}>
-                Terms of Service
-              </Text>{" "}
-              and{" "}
-              <Text style={styles.link}>
-                Privacy Policy
-              </Text>
-              .
+              I agree to the <Text style={styles.link}>Terms of Service</Text>{" "}
+              and <Text style={styles.link}>Privacy Policy</Text>.
             </Text>
           </View>
 
           {/* BUTTON */}
           <TouchableOpacity
-            style={[
-              styles.button,
-              (!agree || loading) &&
-                { opacity: 0.6 },
-            ]}
+            style={[styles.button, (!agree || loading) && { opacity: 0.6 }]}
             onPress={handleRegister}
             disabled={!agree || loading}
           >
@@ -173,20 +151,12 @@ const handleRegister = async () => {
         {/* SOCIAL */}
         <View style={styles.socialRow}>
           <TouchableOpacity style={styles.socialBtn}>
-            <MaterialIcons
-              name="mail"
-              size={20}
-              color="#111"
-            />
+            <MaterialIcons name="mail" size={20} color="#111" />
             <Text>Google</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.socialBtn}>
-            <MaterialIcons
-              name="apple"
-              size={20}
-              color="#111"
-            />
+            <MaterialIcons name="apple" size={20} color="#111" />
             <Text>Apple</Text>
           </TouchableOpacity>
         </View>
@@ -197,9 +167,7 @@ const handleRegister = async () => {
             Already have an account?{" "}
             <Text
               style={styles.footerLink}
-              onPress={() =>
-                router.push("/(auth)/login")
-              }
+              onPress={() => router.push("/(auth)/login")}
             >
               Log In
             </Text>
