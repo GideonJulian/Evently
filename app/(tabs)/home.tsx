@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { supabase } from "@/src/lib/supabase";
 
 const categories = ["All Events", "Music", "Art", "Tech", "Food", "Sport"];
 
@@ -18,16 +19,14 @@ const featuredEvents = [
     title: "Summer Soundwave 2024",
     location: "Los Angeles, CA",
     date: "JUN 12",
-    image:
-      require('../../assets/images/event1.jpg'),
+    image: require("../../assets/images/event1.jpg"),
   },
   {
     id: "2",
     title: "Modernism Reimagined",
     location: "San Francisco, CA",
     date: "JUN 15",
-    image:
-      require('../../assets/images/event4.jpg'),
+    image: require("../../assets/images/event4.jpg"),
   },
 ];
 
@@ -37,16 +36,14 @@ const upcomingEvents = [
     title: "Neon Nights: Tech House",
     location: "The Warehouse, LA",
     time: "JUN 18 • 8:00 PM",
-    image:
-      require('../../assets/images/event2.jpg'),
+    image: require("../../assets/images/event2.jpg"),
   },
   {
     id: "2",
     title: "Global Tech Summit 2024",
     location: "Convention Center",
     time: "JUN 20 • 10:00 AM",
-    image:
-      require('../../assets/images/event3.jpg'),
+    image: require("../../assets/images/event3.jpg"),
   },
 ];
 
@@ -55,28 +52,37 @@ const nearby = [
     id: "1",
     title: "Gourmet Street Food",
     distance: "0.8 miles away",
-    image:
-      require('../../assets/images/event4.jpg'),
+    image: require("../../assets/images/event4.jpg"),
   },
   {
     id: "2",
     title: "Jazz in the Park",
     distance: "1.2 miles away",
-    image:
-      require('../../assets/images/event5.jpg'),
+    image: require("../../assets/images/event5.jpg"),
   },
 ];
 
 export default function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState("All Events");
+  const [userName, setUserName] = useState("User");
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
 
+      const user = data?.user;
+
+      if (user?.user_metadata?.full_name) {
+        setUserName(user.user_metadata.full_name);
+      }
+    };
+    getUser();
+  }, []);
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView showsVerticalScrollIndicator={false}>
-
         {/* Greeting */}
         <View style={styles.section}>
-          <Text style={styles.greeting}>Hello 👋</Text>
+          <Text style={styles.greeting}>Hello, {userName}! 👋</Text>
         </View>
 
         {/* Search Bar */}
@@ -88,7 +94,11 @@ export default function HomeScreen() {
         </View>
 
         {/* Categories */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chips}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.chips}
+        >
           {categories.map((item) => (
             <TouchableOpacity
               key={item}
@@ -182,7 +192,8 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   section: {
-    padding: 20,
+    paddingHorizontal: 20,
+    marginTop: 40,
   },
   greeting: {
     fontSize: 24,
