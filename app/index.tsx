@@ -7,9 +7,18 @@ import { useRef } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 export default function Splash() {
   const shimmerAnim = useRef(new Animated.Value(0)).current;
+const resetApp = async () => {
+  // 1. Clear onboarding flag
+  await AsyncStorage.removeItem("hasSeenOnboarding");
 
+  // 2. Sign out user
+  await supabase.auth.signOut();
+
+  console.log("App reset done");
+};
   useEffect(() => {
     init();
+    // resetApp(); 
 
     Animated.loop(
       Animated.timing(shimmerAnim, {
@@ -21,7 +30,7 @@ export default function Splash() {
     ).start();
   }, []);
   const init = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 4000));
     try {
       const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
       const {
