@@ -1,138 +1,303 @@
-import { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  Easing,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import { View, Text, Image, StyleSheet, Animated, Easing } from "react-native";
-import { supabase } from "../src/lib/supabase";
-import { useRef } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
+import { supabase } from "../src/lib/supabase";
+
 export default function Splash() {
-  const shimmerAnim = useRef(new Animated.Value(0)).current;
-  const resetApp = async () => {
-    // 1. Clear onboarding flag
-    await AsyncStorage.removeItem("hasSeenOnboarding");
+  const logoScale = useRef(new Animated.Value(0.8)).current;
+  const logoFloat = useRef(new Animated.Value(0)).current;
 
-    // 2. Sign out user
-    await supabase.auth.signOut();
+  const titleOpacity = useRef(new Animated.Value(0)).current;
+  const titleTranslate = useRef(new Animated.Value(20)).current;
 
-    console.log("App reset done");
-  };
+  const subtitleOpacity = useRef(new Animated.Value(0)).current;
+  const subtitleTranslate = useRef(new Animated.Value(15)).current;
+
+  const footerOpacity = useRef(new Animated.Value(0)).current;
+
+  const progress = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
+    startAnimations();
     init();
-    // resetApp();
+  }, []);
 
-    Animated.loop(
-      Animated.timing(shimmerAnim, {
-        toValue: 120,
-        duration: 1500,
-        easing: Easing.inOut(Easing.ease),
+  const startAnimations = () => {
+    Animated.parallel([
+      Animated.timing(logoScale, {
+        toValue: 1,
+        duration: 700,
+        easing: Easing.out(Easing.exp),
         useNativeDriver: true,
       }),
+
+      Animated.sequence([
+        Animated.delay(300),
+        Animated.parallel([
+          Animated.timing(titleOpacity, {
+            toValue: 1,
+            duration: 700,
+            useNativeDriver: true,
+          }),
+
+          Animated.timing(titleTranslate, {
+            toValue: 0,
+            duration: 800,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: true,
+          }),
+        ]),
+      ]),
+
+      Animated.sequence([
+        Animated.delay(700),
+        Animated.parallel([
+          Animated.timing(subtitleOpacity, {
+            toValue: 1,
+            duration: 700,
+            useNativeDriver: true,
+          }),
+
+          Animated.timing(subtitleTranslate, {
+            toValue: 0,
+            duration: 700,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: true,
+          }),
+        ]),
+      ]),
+
+      Animated.sequence([
+        Animated.delay(1000),
+        Animated.timing(footerOpacity, {
+          toValue: 1,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+      ]),
+
+      Animated.timing(progress, {
+        toValue: 1,
+        duration: 4000,
+        easing: Easing.linear,
+        useNativeDriver: false,
+      }),
+    ]).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(logoFloat, {
+          toValue: -8,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+
+        Animated.timing(logoFloat, {
+          toValue: 0,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
     ).start();
-  }, []);
+  };
+
   const init = async () => {
     await new Promise((resolve) => setTimeout(resolve, 4000));
+
     try {
-      const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
+      const hasSeenOnboarding =
+        await AsyncStorage.getItem("hasSeenOnboarding");
+
       const {
         data: { session },
       } = await supabase.auth.getSession();
+
       const isLoggedIn = !!session;
+
       if (!hasSeenOnboarding) {
         router.replace("/onboarding");
         return;
       }
+
       if (isLoggedIn) {
         router.replace("/(tabs)/home");
         return;
       }
+
       router.replace("/(auth)/login");
     } catch (err) {
-      console.log("Init error:", err);
+      console.log(err);
       router.replace("/onboarding");
     }
   };
 
+  const progressWidth = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0%", "100%"],
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <View style={styles.logoContainer}>
-          <MaterialIcons name="confirmation-number" size={60} color="#fff" />
+        <Animated.View
+          style={[
+            styles.logoWrapper,
+            {
+              transform: [
+                { scale: logoScale },
+                { translateY: logoFloat },
+              ],
+            },
+          ]}
+        >
+          <MaterialIcons
+            name="confirmation-number"
+            size={50}
+            color="#fff"
+          />
+        </Animated.View>
 
+        <Animated.Text
+          style={[
+            styles.title,
+            {
+              opacity: titleOpacity,
+              transform: [{ translateY: titleTranslate }],
+            },
+          ]}
+        >
+          Evently
+        </Animated.Text>
+
+        <Animated.Text
+          style={[
+            styles.subtitle,
+            {
+              opacity: subtitleOpacity,
+              transform: [{ translateY: subtitleTranslate }],
+            },
+          ]}
+        >
+          Discover your next experience.
+        </Animated.Text>
+      </View>
+
+      <View style={styles.progressContainer}>
+        <View style={styles.progressBackground}>
           <Animated.View
             style={[
-              styles.shimmer,
+              styles.progressFill,
               {
-                transform: [{ translateX: shimmerAnim }, { rotate: "25deg" }],
+                width: progressWidth,
               },
             ]}
           />
         </View>
-        <Text style={styles.title}>Evently</Text>
-        <Text style={styles.subtitle}> Discover Amazing Events </Text>
       </View>
+
+      <Animated.View
+        style={[
+          styles.footer,
+          {
+            opacity: footerOpacity,
+          },
+        ]}
+      >
+        <Text style={styles.footerText}>
+          PREMIUM EVENT MARKETPLACE
+        </Text>
+      </Animated.View>
     </View>
   );
 }
+
+const PRIMARY = "#2563EB";
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: 30,
   },
 
-  logoContainer: {
-    width: 150,
-    height: 150,
-    borderRadius: 24,
-    backgroundColor: "#2563EB",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-
-    shadowColor: "#2563EB",
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-
-    elevation: 8,
-  },
   content: {
     alignItems: "center",
   },
 
-  shimmer: {
-    position: "absolute",
-    width: 40,
-    height: 200,
-    backgroundColor: "rgba(255,255,255,0.3)",
+  logoWrapper: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: PRIMARY,
+    justifyContent: "center",
+    alignItems: "center",
+
+    shadowColor: PRIMARY,
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+
+    elevation: 5,
+    marginBottom: 18,
   },
 
   title: {
-    marginTop: 24,
-    fontSize: 36,
-    fontWeight: "700",
-    color: "#0F172A",
-    textAlign: "center",
+    fontSize: 40,
+    fontWeight: "800",
+    color: PRIMARY,
+    letterSpacing: -1,
   },
 
   subtitle: {
-    marginTop: 8,
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#64748B",
-    textTransform: "uppercase",
-    letterSpacing: 1.5,
+    marginTop: 10,
+    fontSize: 16,
+    color: "#6B7280",
     textAlign: "center",
   },
 
-  logo: {
-    width: 150,
-    height: 150,
-    resizeMode: "contain",
+  progressContainer: {
+    position: "absolute",
+    bottom: 95,
+    width: 120,
+  },
+
+  progressBackground: {
+    height: 3,
+    borderRadius: 5,
+    backgroundColor: "#E5E7EB",
+    overflow: "hidden",
+  },
+
+  progressFill: {
+    height: 3,
+    borderRadius: 5,
+    backgroundColor: PRIMARY,
+  },
+
+  footer: {
+    position: "absolute",
+    bottom: 50,
+  },
+
+  footerText: {
+    fontSize: 11,
+    color: "#9CA3AF",
+    letterSpacing: 2.5,
+    fontWeight: "600",
   },
 });
