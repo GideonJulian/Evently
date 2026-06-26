@@ -62,12 +62,12 @@ export default function EventDetailsScreen() {
             <View
               style={{
                 backgroundColor: "#b6bff3",
-                padding: 8,
+                padding: 10,
                 borderRadius: 10,
                 marginRight: 12,
               }}
             >
-              <MaterialIcons name="event" size={24} color="#000" />
+              <MaterialIcons name="event" size={24} color="#494747" />
             </View>
             <View
               style={{
@@ -85,12 +85,12 @@ export default function EventDetailsScreen() {
             <View
               style={{
                 backgroundColor: "#b6bff3",
-                padding: 8,
+                padding: 10,
                 borderRadius: 10,
                 marginRight: 12,
               }}
             >
-              <MaterialIcons name="map" size={24} color="#000" />
+              <MaterialIcons name="map" size={24} color="#494747" />
             </View>
 
             <View
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
 
   backBtn: {
     position: "absolute",
-    top: 60,
+    top: 50,
     left: 20,
     backgroundColor: "white",
     padding: 10,
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
 
   favoriteBtn: {
     position: "absolute",
-    top: 60,
+    top: 50,
     right: 20,
     backgroundColor: "white",
     padding: 10,
