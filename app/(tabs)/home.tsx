@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { supabase } from "@/src/lib/supabase";
-
+import { router } from "expo-router";
 const categories = ["All Events", "Music", "Art", "Tech", "Food", "Sport"];
 
 const featuredEvents = [
@@ -132,7 +132,17 @@ export default function HomeScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingHorizontal: 16 }}
           renderItem={({ item }) => (
-            <View style={styles.card}>
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() =>
+                router.push({
+                  pathname: "/event/[id]",
+                  params: {
+                    id: item.id,
+                  },
+                })
+              }
+            >
               <Image source={item.image} style={styles.cardImage} />
               <View style={styles.dateTag}>
                 <Text style={{ color: "#fff", fontWeight: "bold" }}>
@@ -143,7 +153,7 @@ export default function HomeScreen() {
                 <Text style={styles.cardTitle}>{item.title}</Text>
                 <Text style={styles.cardSub}>{item.location}</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           )}
         />
 
@@ -153,7 +163,18 @@ export default function HomeScreen() {
         </View>
 
         {upcomingEvents.map((item) => (
-          <View key={item.id} style={styles.listItem}>
+          <TouchableOpacity
+            key={item.id}
+            style={styles.listItem}
+            onPress={() =>
+              router.push({
+                pathname: "/event/[id]",
+                params: {
+                  id: item.id,
+                },
+              })
+            }
+          >
             <Image source={item.image} style={styles.listImage} />
             <View style={{ flex: 1 }}>
               <Text style={styles.time}>{item.time}</Text>
@@ -161,7 +182,7 @@ export default function HomeScreen() {
               <Text style={styles.listSub}>{item.location}</Text>
             </View>
             <MaterialIcons name="favorite-border" size={20} color="#888" />
-          </View>
+          </TouchableOpacity>
         ))}
 
         {/* Nearby */}
@@ -171,11 +192,22 @@ export default function HomeScreen() {
 
         <View style={styles.grid}>
           {nearby.map((item) => (
-            <View key={item.id} style={styles.gridCard}>
+            <TouchableOpacity
+              key={item.id}
+              style={styles.gridCard}
+              onPress={() =>
+                router.push({
+                  pathname: "/event/[id]",
+                  params: {
+                    id: item.id,
+                  },
+                })
+              }
+            >
               <Image source={item.image} style={styles.gridImage} />
               <Text style={styles.gridTitle}>{item.title}</Text>
               <Text style={styles.gridSub}>{item.distance}</Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
 

@@ -8,8 +8,10 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-
+import { useLocalSearchParams } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 export default function EventDetailsScreen() {
+  const { id } = useLocalSearchParams();
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -17,16 +19,16 @@ export default function EventDetailsScreen() {
 
         <View style={styles.hero}>
           <Image
-            source={ require("../../assets/images/eventHero.jpg") }
+            source={require("../../assets/images/eventHero.jpg")}
             style={styles.heroImage}
           />
 
           <TouchableOpacity style={styles.backBtn}>
-            <Text>←</Text>
+            <MaterialIcons name="arrow-back" size={15} color="black" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.favoriteBtn}>
-            <Text>♡</Text>
+            <MaterialIcons name="favorite-border" size={15} color="black" />
           </TouchableOpacity>
         </View>
 
@@ -34,94 +36,100 @@ export default function EventDetailsScreen() {
 
         <View style={styles.content}>
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>
-              LIVE EVENT
-            </Text>
+            <Text style={styles.badgeText}>LIVE EVENT</Text>
           </View>
 
-          <Text style={styles.title}>
-            Summer Jazz Night
-          </Text>
+          <Text style={styles.title}>Summer Jazz Night</Text>
 
           {/* Organizer */}
 
           <View style={styles.organizer}>
             <Image
-              source={ require("../../assets/images/organizerAvatar.jpg") }
+              source={require("../../assets/images/organizerAvatar.jpg")}
               style={styles.avatar}
             />
 
             <View>
-              <Text style={styles.organizedBy}>
-                Organized by
-              </Text>
+              <Text style={styles.organizedBy}>Organized by</Text>
 
-              <Text style={styles.organizerName}>
-                Blue Note Productions
-              </Text>
+              <Text style={styles.organizerName}>Blue Note Productions</Text>
             </View>
           </View>
 
           {/* Cards */}
 
           <View style={styles.card}>
-            <Text style={styles.cardLabel}>
-              Date & Time
-            </Text>
+            <View
+              style={{
+                backgroundColor: "#b6bff3",
+                padding: 8,
+                borderRadius: 10,
+                marginRight: 12,
+              }}
+            >
+              <MaterialIcons name="event" size={24} color="#000" />
+            </View>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text style={styles.cardLabel}>Date & Time</Text>
 
-            <Text style={styles.cardValue}>
-              Aug 24, 2026 • 7:00 PM
-            </Text>
+              <Text style={styles.cardValue}>Aug 24, 2026 • 7:00 PM</Text>
+            </View>
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.cardLabel}>
-              Location
-            </Text>
+            <View
+              style={{
+                backgroundColor: "#b6bff3",
+                padding: 8,
+                borderRadius: 10,
+                marginRight: 12,
+              }}
+            >
+              <MaterialIcons name="map" size={24} color="#000" />
+            </View>
 
-            <Text style={styles.cardValue}>
-              Central Park Amphitheater
-            </Text>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text style={styles.cardLabel}>Location</Text>
+
+              <Text style={styles.cardValue}>Central Park Amphitheater</Text>
+            </View>
           </View>
 
           {/* Description */}
 
-          <Text style={styles.sectionTitle}>
-            About Event
-          </Text>
+          <Text style={styles.sectionTitle}>About Event</Text>
 
           <Text style={styles.description}>
-            Experience an unforgettable
-            evening under the stars with
-            world-class jazz musicians.
+            Experience an unforgettable evening under the stars with world-class
+            jazz musicians.
           </Text>
 
           {/* Tags */}
 
           <View style={styles.tags}>
-            <Text style={styles.tag}>
-              #JazzFestival
-            </Text>
+            <Text style={styles.tag}>#JazzFestival</Text>
 
-            <Text style={styles.tag}>
-              #OutdoorMusic
-            </Text>
+            <Text style={styles.tag}>#OutdoorMusic</Text>
 
-            <Text style={styles.tag}>
-              #SummerVibes
-            </Text>
+            <Text style={styles.tag}>#SummerVibes</Text>
           </View>
 
           {/* Map Placeholder */}
 
-          <Text style={styles.sectionTitle}>
-            Location Map
-          </Text>
+          <Text style={styles.sectionTitle}>Location Map</Text>
 
           <View style={styles.map}>
-            <Text>
-              Map Integration Here
-            </Text>
+            <Text>Map Integration Here</Text>
           </View>
         </View>
       </ScrollView>
@@ -130,21 +138,13 @@ export default function EventDetailsScreen() {
 
       <View style={styles.bottomBar}>
         <View>
-          <Text style={styles.priceLabel}>
-            Price
-          </Text>
+          <Text style={styles.priceLabel}>Price</Text>
 
-          <Text style={styles.price}>
-            ₦15,000
-          </Text>
+          <Text style={styles.price}>₦15,000</Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.buyBtn}
-        >
-          <Text style={styles.buyText}>
-            Buy Ticket
-          </Text>
+        <TouchableOpacity style={styles.buyBtn}>
+          <Text style={styles.buyText}>Buy Ticket</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -191,16 +191,16 @@ const styles = StyleSheet.create({
   },
 
   badge: {
-    backgroundColor: "#EEF4FF",
+    backgroundColor: "#22c55e",
     alignSelf: "flex-start",
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20,
+    borderRadius: 40,
   },
 
   badgeText: {
-    color: "#2563EB",
-    fontWeight: "600",
+    color: "#000",
+    fontWeight: "400",
   },
 
   title: {
@@ -236,6 +236,8 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     marginTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   cardLabel: {
