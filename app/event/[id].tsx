@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import router from "expo-router";
 export default function EventDetailsScreen() {
   const { id } = useLocalSearchParams();
   return (

@@ -7,16 +7,17 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  TextInput,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { supabase } from "@/src/lib/supabase";
 import { router } from "expo-router";
 const categories = ["All Events", "Music", "Art", "Tech", "Food", "Sport"];
-
 const featuredEvents = [
   {
     id: "1",
     title: "Summer Soundwave 2024",
+    category: "Music",
     location: "Los Angeles, CA",
     date: "JUN 12",
     image: require("../../assets/images/event1.jpg"),
@@ -24,16 +25,17 @@ const featuredEvents = [
   {
     id: "2",
     title: "Modernism Reimagined",
+    category: "Art",
     location: "San Francisco, CA",
     date: "JUN 15",
     image: require("../../assets/images/event4.jpg"),
   },
 ];
-
 const upcomingEvents = [
   {
     id: "1",
     title: "Neon Nights: Tech House",
+    category: "Music",
     location: "The Warehouse, LA",
     time: "JUN 18 • 8:00 PM",
     image: require("../../assets/images/event2.jpg"),
@@ -41,22 +43,24 @@ const upcomingEvents = [
   {
     id: "2",
     title: "Global Tech Summit 2024",
+    category: "Tech",
     location: "Convention Center",
     time: "JUN 20 • 10:00 AM",
     image: require("../../assets/images/event3.jpg"),
   },
 ];
-
 const nearby = [
   {
     id: "1",
     title: "Gourmet Street Food",
+    category: "Food",
     distance: "0.8 miles away",
     image: require("../../assets/images/event4.jpg"),
   },
   {
     id: "2",
     title: "Jazz in the Park",
+    category: "Music",
     distance: "1.2 miles away",
     image: require("../../assets/images/event5.jpg"),
   },
@@ -65,6 +69,41 @@ const nearby = [
 export default function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState("All Events");
   const [userName, setUserName] = useState("User");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredFeatured = featuredEvents.filter((event) => {
+    const matchesCategory =
+      activeCategory === "All Events" || event.category === activeCategory;
+
+    const matchesSearch =
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
+
+  const filteredUpcoming = upcomingEvents.filter((event) => {
+    const matchesCategory =
+      activeCategory === "All Events" || event.category === activeCategory;
+
+    const matchesSearch =
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
+
+  const filteredNearby = nearby.filter((event) => {
+    const matchesCategory =
+      activeCategory === "All Events" || event.category === activeCategory;
+
+    const matchesSearch = event.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
+
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -87,10 +126,27 @@ export default function HomeScreen() {
 
         {/* Search Bar */}
         <View style={styles.searchBox}>
-          <Ionicons name="search" size={18} color="#888" />
-          <Text style={{ marginLeft: 8, color: "#888" }}>
-            Search events, artists...
-          </Text>
+          <Ionicons
+            name="search"
+            size={20}
+            color="#888"
+            style={{ marginRight: 10 }}
+          />
+
+          <TextInput
+            placeholder="Search events, artists..."
+            placeholderTextColor="#999"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            style={styles.searchInput}
+            returnKeyType="search"
+          />
+
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <Ionicons name="close-circle" size={20} color="#888" />
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Categories */}
@@ -126,7 +182,7 @@ export default function HomeScreen() {
         </View>
 
         <FlatList
-          data={featuredEvents}
+          data={filteredFeatured}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
@@ -162,7 +218,7 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Upcoming</Text>
         </View>
 
-        {upcomingEvents.map((item) => (
+        {filteredUpcoming.map((item) => (
           <TouchableOpacity
             key={item.id}
             style={styles.listItem}
@@ -191,7 +247,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.grid}>
-          {nearby.map((item) => (
+          {filteredNearby.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={styles.gridCard}
@@ -239,6 +295,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#ddd",
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: "#222",
+    paddingVertical: 0,
   },
 
   chips: {
