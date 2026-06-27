@@ -70,34 +70,16 @@ const nearby = [
 export default function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState("All Events");
   const [userName, setUserName] = useState("User");
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredFeatured = featuredEvents.filter((event) => {
-    const matchesCategory =
-      activeCategory === "All Events" || event.category === activeCategory;
-    const matchesSearch =
-      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  const filteredUpcoming = upcomingEvents.filter((event) => {
-    const matchesCategory =
-      activeCategory === "All Events" || event.category === activeCategory;
-    const matchesSearch =
-      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  const filteredNearby = nearby.filter((event) => {
-    const matchesCategory =
-      activeCategory === "All Events" || event.category === activeCategory;
-    const matchesSearch = event.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredFeatured = featuredEvents.filter(
+    (event) => activeCategory === "All Events" || event.category === activeCategory
+  );
+  const filteredUpcoming = upcomingEvents.filter(
+    (event) => activeCategory === "All Events" || event.category === activeCategory
+  );
+  const filteredNearby = nearby.filter(
+    (event) => activeCategory === "All Events" || event.category === activeCategory
+  );
 
   useEffect(() => {
     const getUser = async () => {
@@ -112,31 +94,21 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-
       {/* ── FIXED HEADER ── */}
       <View style={styles.header}>
-        {/* Greeting */}
         <View style={styles.greetingWrapper}>
           <Text style={styles.greeting}>Hello, {userName}! 👋</Text>
         </View>
 
-        {/* Search */}
-        <View style={styles.searchBox}>
-          <TextInput
-            placeholder="Search events, artists..."
-            placeholderTextColor="#999"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            style={styles.searchInput}
-            returnKeyType="search"
-          />
+        {/* Search box — tappable, opens search modal */}
+        <TouchableOpacity
+          style={styles.searchBox}
+          activeOpacity={0.8}
+          onPress={() => router.push("/search")}
+        >
           <Ionicons name="search" size={20} color="#888" style={{ marginRight: 10 }} />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery("")}>
-              <Ionicons name="close-circle" size={20} color="#888" />
-            </TouchableOpacity>
-          )}
-        </View>
+          <Text style={styles.searchPlaceholder}>Search events, artists...</Text>
+        </TouchableOpacity>
 
         {/* Category Chips */}
         <ScrollView
@@ -166,7 +138,6 @@ export default function HomeScreen() {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Featured</Text>
         </View>
-
         <FlatList
           data={filteredFeatured}
           horizontal
@@ -195,7 +166,6 @@ export default function HomeScreen() {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Upcoming</Text>
         </View>
-
         {filteredUpcoming.map((item) => (
           <TouchableOpacity
             key={item.id}
@@ -216,7 +186,6 @@ export default function HomeScreen() {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Nearby</Text>
         </View>
-
         <View style={styles.grid}>
           {filteredNearby.map((item) => (
             <TouchableOpacity
@@ -230,10 +199,9 @@ export default function HomeScreen() {
             </TouchableOpacity>
           ))}
         </View>
-
       </ScrollView>
 
-      {/* Floating Action Button */}
+      {/* FAB */}
       <TouchableOpacity style={styles.fab}>
         <Ionicons name="add" size={28} color="#fff" />
       </TouchableOpacity>
@@ -242,57 +210,39 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F8F7FA",
-  },
+  container: { flex: 1, backgroundColor: "#F8F7FA" },
 
-  // ── Fixed Header ──
   header: {
     backgroundColor: "#F8F7FA",
-    paddingTop: 50,       // safe area / status bar offset
+    paddingTop: 50,
     paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
-    // Shadow (iOS)
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
-    // Shadow (Android)
-    elevation: 2,
+    elevation: 4,
     zIndex: 100,
   },
-  greetingWrapper: {
-    paddingHorizontal: 20,
-    marginBottom: 8,
-  },
-  greeting: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#39364F",
-  },
+  greetingWrapper: { paddingHorizontal: 20, marginBottom: 8 },
+  greeting: { fontSize: 24, fontWeight: "700", color: "#39364F" },
+
   searchBox: {
     flexDirection: "row",
     alignItems: "center",
     marginHorizontal: 16,
     marginBottom: 12,
-    padding: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderRadius: 50,
     borderWidth: 1,
     borderColor: "#ddd",
     backgroundColor: "#fff",
   },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-    color: "#222",
-    paddingVertical: 0,
-  },
-  chips: {
-    paddingHorizontal: 16,
-    marginBottom: 4,
-  },
+  searchPlaceholder: { fontSize: 15, color: "#999" },
+
+  chips: { paddingHorizontal: 16, marginBottom: 4 },
   chip: {
     paddingHorizontal: 14,
     paddingVertical: 8,
@@ -300,22 +250,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee",
     marginRight: 10,
   },
-  activeChip: {
-    backgroundColor: "#2563EB",
-  },
+  activeChip: { backgroundColor: "#2563EB" },
 
-  // ── Sections ──
-  sectionHeader: {
-    paddingHorizontal: 16,
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
+  sectionHeader: { paddingHorizontal: 16, marginTop: 20, marginBottom: 10 },
+  sectionTitle: { fontSize: 18, fontWeight: "700" },
 
-  // ── Featured Cards ──
   card: {
     width: 250,
     marginRight: 12,
@@ -325,18 +264,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#eee",
   },
-  cardImage: {
-    width: "100%",
-    height: 140,
-  },
-  cardTitle: {
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  cardSub: {
-    color: "#666",
-    marginTop: 2,
-  },
+  cardImage: { width: "100%", height: 140 },
+  cardTitle: { fontWeight: "700", fontSize: 16 },
+  cardSub: { color: "#666", marginTop: 2 },
   dateTag: {
     position: "absolute",
     top: 10,
@@ -347,7 +277,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
 
-  // ── Upcoming List ──
   listItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -359,50 +288,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: "#fff",
   },
-  listImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  time: {
-    color: "#2563EB",
-    fontWeight: "600",
-    fontSize: 12,
-  },
-  listTitle: {
-    fontWeight: "700",
-  },
-  listSub: {
-    color: "#666",
-  },
+  listImage: { width: 60, height: 60, borderRadius: 10, marginRight: 10 },
+  time: { color: "#2563EB", fontWeight: "600", fontSize: 12 },
+  listTitle: { fontWeight: "700" },
+  listSub: { color: "#666" },
 
-  // ── Nearby Grid ──
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-  },
-  gridCard: {
-    width: "48%",
-    marginBottom: 12,
-  },
-  gridImage: {
-    width: "100%",
-    height: 100,
-    borderRadius: 12,
-  },
-  gridTitle: {
-    fontWeight: "700",
-    marginTop: 6,
-  },
-  gridSub: {
-    color: "#666",
-    fontSize: 12,
-  },
+  grid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 16 },
+  gridCard: { width: "48%", marginBottom: 12 },
+  gridImage: { width: "100%", height: 100, borderRadius: 12 },
+  gridTitle: { fontWeight: "700", marginTop: 6 },
+  gridSub: { color: "#666", fontSize: 12 },
 
-  // ── FAB ──
   fab: {
     position: "absolute",
     bottom: 80,

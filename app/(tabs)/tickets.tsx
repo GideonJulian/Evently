@@ -9,7 +9,7 @@ export default function TicketScreen() {
         alignItems: "center",
       }}
     >
-      <Text>Search Screen</Text>
+      <Text>Ticket Screen</Text>
     </View>
   );
 }

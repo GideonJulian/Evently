@@ -63,7 +63,7 @@ export default function TabsLayout() {
         }}
       />
 
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="search"
         options={{
           title: "Search",
@@ -76,7 +76,7 @@ export default function TabsLayout() {
             />
           ),
         }}
-      />
+      /> */}
 
       <Tabs.Screen
         name="tickets"
