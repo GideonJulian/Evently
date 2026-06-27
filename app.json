@@ -25,7 +25,13 @@
     },
     "plugins": [
       "expo-router",
-      ["expo-splash-screen", { "backgroundColor": "#2563EB" }]
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#2563EB"
+        }
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
