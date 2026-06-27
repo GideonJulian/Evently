@@ -28,6 +28,7 @@ export default function Splash() {
   useEffect(() => {
     startAnimations();
     init();
+    // clearstorage()
   }, []);
 
   const startAnimations = () => {
@@ -110,6 +111,14 @@ export default function Splash() {
       ])
     ).start();
   };
+  const clearstorage = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log("AsyncStorage cleared successfully.");
+    } catch (error) {
+      console.error("Error clearing AsyncStorage:", error);
+    }
+  }
 
   const init = async () => {
     await new Promise((resolve) => setTimeout(resolve, 4000));

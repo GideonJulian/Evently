@@ -202,9 +202,9 @@ export default function HomeScreen() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity style={styles.fab}>
+      {/* <TouchableOpacity style={styles.fab}>
         <Ionicons name="add" size={28} color="#fff" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }
