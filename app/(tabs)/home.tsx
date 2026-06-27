@@ -72,13 +72,16 @@ export default function HomeScreen() {
   const [userName, setUserName] = useState("User");
 
   const filteredFeatured = featuredEvents.filter(
-    (event) => activeCategory === "All Events" || event.category === activeCategory
+    (event) =>
+      activeCategory === "All Events" || event.category === activeCategory,
   );
   const filteredUpcoming = upcomingEvents.filter(
-    (event) => activeCategory === "All Events" || event.category === activeCategory
+    (event) =>
+      activeCategory === "All Events" || event.category === activeCategory,
   );
   const filteredNearby = nearby.filter(
-    (event) => activeCategory === "All Events" || event.category === activeCategory
+    (event) =>
+      activeCategory === "All Events" || event.category === activeCategory,
   );
 
   useEffect(() => {
@@ -106,8 +109,15 @@ export default function HomeScreen() {
           activeOpacity={0.8}
           onPress={() => router.push("/search")}
         >
-          <Ionicons name="search" size={20} color="#888" style={{ marginRight: 10 }} />
-          <Text style={styles.searchPlaceholder}>Search events, artists...</Text>
+          <Ionicons
+            name="search"
+            size={20}
+            color="#888"
+            style={{ marginRight: 10 }}
+          />
+          <Text style={styles.searchPlaceholder}>
+            Search events, artists...
+          </Text>
         </TouchableOpacity>
 
         {/* Category Chips */}
@@ -121,9 +131,17 @@ export default function HomeScreen() {
             <TouchableOpacity
               key={item}
               onPress={() => setActiveCategory(item)}
-              style={[styles.chip, activeCategory === item && styles.activeChip]}
+              style={[
+                styles.chip,
+                activeCategory === item && styles.activeChip,
+              ]}
             >
-              <Text style={{ color: activeCategory === item ? "#fff" : "#333", fontWeight: "600" }}>
+              <Text
+                style={{
+                  color: activeCategory === item ? "#fff" : "#333",
+                  fontWeight: "600",
+                }}
+              >
                 {item}
               </Text>
             </TouchableOpacity>
@@ -132,8 +150,10 @@ export default function HomeScreen() {
       </View>
 
       {/* ── SCROLLABLE CONTENT ── */}
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
-
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
         {/* Featured */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Featured</Text>
@@ -148,11 +168,18 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push({ pathname: "/event/[id]", params: { id: item.id } })}
+              onPress={() =>
+                router.push({
+                  pathname: "/event/[id]",
+                  params: { id: item.id },
+                })
+              }
             >
               <Image source={item.image} style={styles.cardImage} />
               <View style={styles.dateTag}>
-                <Text style={{ color: "#fff", fontWeight: "bold" }}>{item.date}</Text>
+                <Text style={{ color: "#fff", fontWeight: "bold" }}>
+                  {item.date}
+                </Text>
               </View>
               <View style={{ padding: 10 }}>
                 <Text style={styles.cardTitle}>{item.title}</Text>
@@ -170,7 +197,9 @@ export default function HomeScreen() {
           <TouchableOpacity
             key={item.id}
             style={styles.listItem}
-            onPress={() => router.push({ pathname: "/event/[id]", params: { id: item.id } })}
+            onPress={() =>
+              router.push({ pathname: "/event/[id]", params: { id: item.id } })
+            }
           >
             <Image source={item.image} style={styles.listImage} />
             <View style={{ flex: 1 }}>
@@ -191,7 +220,12 @@ export default function HomeScreen() {
             <TouchableOpacity
               key={item.id}
               style={styles.gridCard}
-              onPress={() => router.push({ pathname: "/event/[id]", params: { id: item.id } })}
+              onPress={() =>
+                router.push({
+                  pathname: "/event/[id]",
+                  params: { id: item.id },
+                })
+              }
             >
               <Image source={item.image} style={styles.gridImage} />
               <Text style={styles.gridTitle}>{item.title}</Text>
@@ -293,7 +327,12 @@ const styles = StyleSheet.create({
   listTitle: { fontWeight: "700" },
   listSub: { color: "#666" },
 
-  grid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 16 },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+  },
   gridCard: { width: "48%", marginBottom: 12 },
   gridImage: { width: "100%", height: 100, borderRadius: 12 },
   gridTitle: { fontWeight: "700", marginTop: 6 },
