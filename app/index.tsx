@@ -1,11 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Easing,
-} from "react-native";
+import { View, Text, StyleSheet, Animated, Easing } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -108,7 +102,7 @@ export default function Splash() {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   };
   const clearstorage = async () => {
@@ -118,14 +112,13 @@ export default function Splash() {
     } catch (error) {
       console.error("Error clearing AsyncStorage:", error);
     }
-  }
+  };
 
   const init = async () => {
     await new Promise((resolve) => setTimeout(resolve, 4000));
 
     try {
-      const hasSeenOnboarding =
-        await AsyncStorage.getItem("hasSeenOnboarding");
+      const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
 
       const {
         data: { session },
@@ -162,18 +155,11 @@ export default function Splash() {
           style={[
             styles.logoWrapper,
             {
-              transform: [
-                { scale: logoScale },
-                { translateY: logoFloat },
-              ],
+              transform: [{ scale: logoScale }, { translateY: logoFloat }],
             },
           ]}
         >
-          <MaterialIcons
-            name="confirmation-number"
-            size={50}
-            color="#fff"
-          />
+          <MaterialIcons name="confirmation-number" size={50} color="#fff" />
         </Animated.View>
 
         <Animated.Text
@@ -222,9 +208,7 @@ export default function Splash() {
           },
         ]}
       >
-        <Text style={styles.footerText}>
-          PREMIUM EVENT MARKETPLACE
-        </Text>
+        <Text style={styles.footerText}>PREMIUM EVENT MARKETPLACE</Text>
       </Animated.View>
     </View>
   );
