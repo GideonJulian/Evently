@@ -12,64 +12,15 @@ import {
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { supabase } from "@/src/lib/supabase";
 import { router } from "expo-router";
-
+import { featuredEvents, upcomingEvents, nearby } from "@/src/data/events";
+import { EventService } from "@/src/services/event.service";
 const categories = ["All Events", "Music", "Art", "Tech", "Food", "Sport"];
-const featuredEvents = [
-  {
-    id: "1",
-    title: "Summer Soundwave 2024",
-    category: "Music",
-    location: "Los Angeles, CA",
-    date: "JUN 12",
-    image: require("../../assets/images/event1.jpg"),
-  },
-  {
-    id: "2",
-    title: "Modernism Reimagined",
-    category: "Art",
-    location: "San Francisco, CA",
-    date: "JUN 15",
-    image: require("../../assets/images/event4.jpg"),
-  },
-];
-const upcomingEvents = [
-  {
-    id: "1",
-    title: "Neon Nights: Tech House",
-    category: "Music",
-    location: "The Warehouse, LA",
-    time: "JUN 18 • 8:00 PM",
-    image: require("../../assets/images/event2.jpg"),
-  },
-  {
-    id: "2",
-    title: "Global Tech Summit 2024",
-    category: "Tech",
-    location: "Convention Center",
-    time: "JUN 20 • 10:00 AM",
-    image: require("../../assets/images/event3.jpg"),
-  },
-];
-const nearby = [
-  {
-    id: "1",
-    title: "Gourmet Street Food",
-    category: "Food",
-    distance: "0.8 miles away",
-    image: require("../../assets/images/event4.jpg"),
-  },
-  {
-    id: "2",
-    title: "Jazz in the Park",
-    category: "Music",
-    distance: "1.2 miles away",
-    image: require("../../assets/images/event5.jpg"),
-  },
-];
 
 export default function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState("All Events");
   const [userName, setUserName] = useState("User");
+  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<Event[]>([]);
 
   const filteredFeatured = featuredEvents.filter(
     (event) =>
@@ -94,6 +45,14 @@ export default function HomeScreen() {
     };
     getUser();
   }, []);
+
+  const loadEvents = async () => {
+    setLoading(true);
+
+    const data = await EventService.getEvents();
+    setEvents(data);
+    setLoading(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -175,10 +134,13 @@ export default function HomeScreen() {
                 })
               }
             >
-              <Image source={item.image} style={styles.cardImage} />
+              <Image
+                source={{ uri: item.image_url }}
+                style={styles.cardImage}
+              />
               <View style={styles.dateTag}>
                 <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                  {item.date}
+                  {item.event_date}
                 </Text>
               </View>
               <View style={{ padding: 10 }}>
@@ -201,9 +163,9 @@ export default function HomeScreen() {
               router.push({ pathname: "/event/[id]", params: { id: item.id } })
             }
           >
-            <Image source={item.image} style={styles.listImage} />
+            <Image source={{ uri: item.image_url }} style={styles.listImage} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.time}>{item.time}</Text>
+              <Text style={styles.time}>{item.start_time}</Text>
               <Text style={styles.listTitle}>{item.title}</Text>
               <Text style={styles.listSub}>{item.location}</Text>
             </View>
@@ -227,7 +189,10 @@ export default function HomeScreen() {
                 })
               }
             >
-              <Image source={item.image} style={styles.gridImage} />
+              <Image
+                source={{ uri: item.image_url }}
+                style={styles.gridImage}
+              />
               <Text style={styles.gridTitle}>{item.title}</Text>
               <Text style={styles.gridSub}>{item.distance}</Text>
             </TouchableOpacity>
