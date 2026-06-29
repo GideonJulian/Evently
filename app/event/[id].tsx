@@ -20,7 +20,7 @@ export default function EventDetailsScreen() {
 
         <View style={styles.hero}>
           <Image
-            source={require("../../assets/images/eventHero.jpg")}
+            source={require("../../assets/images/event1.jpg")}
             style={styles.heroImage}
           />
 
@@ -145,7 +145,8 @@ export default function EventDetailsScreen() {
         </View>
 
         <TouchableOpacity style={styles.buyBtn}>
-          <Text style={styles.buyText}>Buy Ticket</Text>
+          <Text style={styles.buyText}>
+            Get Ticket</Text>
         </TouchableOpacity>
       </View>
     </View>

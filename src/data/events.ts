@@ -9,7 +9,7 @@ export const featuredEvents: Event[] = [
     category: "Music",
     tags: ["Music", "Festival", "Live"],
 
-    image_url: "../../assets/images/event1.jpg",
+    image_url: require("../../assets/images/event2.jpg"),
 
     organizer_id: "org_1",
     organizer_name: "Soundwave Events",
@@ -44,7 +44,7 @@ export const featuredEvents: Event[] = [
     category: "Art",
     tags: ["Art", "Exhibition"],
 
-    image_url: "../../assets/images/event4.jpg",
+    image_url: require("../../assets/images/event1.jpg"),
 
     organizer_id: "org_2",
     organizer_name: "Art House",
@@ -82,7 +82,7 @@ export const upcomingEvents: Event[] = [
     category: "Music",
     tags: ["Nightlife", "DJ"],
 
-    image_url: "../../assets/images/event2.jpg",
+    image_url: require("../../assets/images/event1.jpg"),
 
     organizer_id: "org_3",
     organizer_name: "Neon Events",
@@ -117,7 +117,7 @@ export const upcomingEvents: Event[] = [
     category: "Tech",
     tags: ["Technology", "Conference"],
 
-    image_url: "../../assets/images/event3.jpg",
+    image_url: require("../../assets/images/event3.jpg"),
 
     organizer_id: "org_4",
     organizer_name: "Tech World",
@@ -155,7 +155,7 @@ export const nearby: Event[] = [
     category: "Food",
     tags: ["Food", "Outdoor"],
 
-    image_url: "../../assets/images/event4.jpg",
+    image_url: require("../../assets/images/event4.jpg"),
 
     organizer_id: "org_5",
     organizer_name: "Food Fest",
@@ -190,7 +190,7 @@ export const nearby: Event[] = [
     category: "Music",
     tags: ["Jazz", "Outdoor"],
 
-    image_url: "../../assets/images/event5.jpg",
+    image_url: require("../../assets/images/event5.jpg"),
 
     organizer_id: "org_6",
     organizer_name: "City Music",
