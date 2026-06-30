@@ -17,6 +17,7 @@ import EventCardSkeleton, {
   UpcomingRowSkeleton,
   NearbyTileSkeleton,
 } from "@/src/components/skeletons/EventCardSkeleton";
+import HeaderSkeleton from "@/src/components/skeletons/HeaderSkeleton";
 
 const categories = ["All Events", "Music", "Art", "Tech", "Food", "Sport"];
 
@@ -25,15 +26,18 @@ export default function HomeScreen() {
   const [userName, setUserName] = useState("User");
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<any[]>([]);
-
+  const [userLoading, setUserLoading] = useState(true);
   const filteredFeatured = featuredEvents.filter(
-    (event) => activeCategory === "All Events" || event.category === activeCategory
+    (event) =>
+      activeCategory === "All Events" || event.category === activeCategory,
   );
   const filteredUpcoming = upcomingEvents.filter(
-    (event) => activeCategory === "All Events" || event.category === activeCategory
+    (event) =>
+      activeCategory === "All Events" || event.category === activeCategory,
   );
   const filteredNearby = nearby.filter(
-    (event) => activeCategory === "All Events" || event.category === activeCategory
+    (event) =>
+      activeCategory === "All Events" || event.category === activeCategory,
   );
 
   useEffect(() => {
@@ -42,11 +46,14 @@ export default function HomeScreen() {
   }, []);
 
   const getUser = async () => {
+    setUserLoading(true);
     const { data } = await supabase.auth.getUser();
     const user = data?.user;
     if (user?.user_metadata?.full_name) {
       setUserName(user.user_metadata.full_name);
     }
+
+    setUserLoading(false);
   };
 
   const loadEvents = async () => {
@@ -58,20 +65,30 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-
       {/* ── FIXED HEADER ── */}
       <View style={styles.header}>
         <View style={styles.greetingWrapper}>
-          <Text style={styles.greeting}>Hello, {userName}! 👋</Text>
-        </View> 
+          {userLoading ? (
+            <HeaderSkeleton width={180} height={26} borderRadius={6} />
+          ) : (
+            <Text style={styles.greeting}>Hello, {userName}! 👋</Text>
+          )}
+        </View>
 
         <TouchableOpacity
           style={styles.searchBox}
           activeOpacity={0.8}
           onPress={() => router.push("/search")}
         >
-          <Ionicons name="search" size={20} color="#888" style={{ marginRight: 10 }} />
-          <Text style={styles.searchPlaceholder}>Search events, artists...</Text>
+          <Ionicons
+            name="search"
+            size={20}
+            color="#888"
+            style={{ marginRight: 10 }}
+          />
+          <Text style={styles.searchPlaceholder}>
+            Search events, artists...
+          </Text>
         </TouchableOpacity>
 
         <ScrollView
@@ -84,9 +101,17 @@ export default function HomeScreen() {
             <TouchableOpacity
               key={item}
               onPress={() => setActiveCategory(item)}
-              style={[styles.chip, activeCategory === item && styles.activeChip]}
+              style={[
+                styles.chip,
+                activeCategory === item && styles.activeChip,
+              ]}
             >
-              <Text style={{ color: activeCategory === item ? "#fff" : "#333", fontWeight: "600" }}>
+              <Text
+                style={{
+                  color: activeCategory === item ? "#fff" : "#333",
+                  fontWeight: "600",
+                }}
+              >
                 {item}
               </Text>
             </TouchableOpacity>
@@ -99,7 +124,6 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
-
         {/* ── Featured ── */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Featured</Text>
@@ -128,13 +152,18 @@ export default function HomeScreen() {
               <TouchableOpacity
                 style={styles.card}
                 onPress={() =>
-                  router.push({ pathname: "/event/[id]", params: { id: item.id } })
+                  router.push({
+                    pathname: "/event/[id]",
+                    params: { id: item.id },
+                  })
                 }
               >
                 <Image source={item.image_url} style={styles.cardImage} />
                 {/* <Image source={{ uri: item.image_url }} style={styles.cardImage} /> */}
                 <View style={styles.dateTag}>
-                  <Text style={{ color: "#fff", fontWeight: "bold" }}>{item.event_date}</Text>
+                  <Text style={{ color: "#fff", fontWeight: "bold" }}>
+                    {item.event_date}
+                  </Text>
                 </View>
                 <View style={{ padding: 10 }}>
                   <Text style={styles.cardTitle}>{item.title}</Text>
@@ -150,28 +179,29 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Upcoming</Text>
         </View>
 
-        {loading ? (
-          [1, 2, 3].map((key) => <UpcomingRowSkeleton key={key} />)
-        ) : (
-          filteredUpcoming.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.listItem}
-              onPress={() =>
-                router.push({ pathname: "/event/[id]", params: { id: item.id } })
-              }
-            >
-              <Image source={item.image_url} style={styles.listImage} />
-              {/* <Image source={{ uri: item.image_url }} style={styles.listImage} /> */}
-              <View style={{ flex: 1 }}>
-                <Text style={styles.time}>{item.start_time}</Text>
-                <Text style={styles.listTitle}>{item.title}</Text>
-                <Text style={styles.listSub}>{item.location}</Text>
-              </View>
-              <MaterialIcons name="favorite-border" size={20} color="#888" />
-            </TouchableOpacity>
-          ))
-        )}
+        {loading
+          ? [1, 2, 3].map((key) => <UpcomingRowSkeleton key={key} />)
+          : filteredUpcoming.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.listItem}
+                onPress={() =>
+                  router.push({
+                    pathname: "/event/[id]",
+                    params: { id: item.id },
+                  })
+                }
+              >
+                <Image source={item.image_url} style={styles.listImage} />
+                {/* <Image source={{ uri: item.image_url }} style={styles.listImage} /> */}
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.time}>{item.start_time}</Text>
+                  <Text style={styles.listTitle}>{item.title}</Text>
+                  <Text style={styles.listSub}>{item.location}</Text>
+                </View>
+                <MaterialIcons name="favorite-border" size={20} color="#888" />
+              </TouchableOpacity>
+            ))}
 
         {/* ── Nearby ── */}
         <View style={styles.sectionHeader}>
@@ -191,7 +221,10 @@ export default function HomeScreen() {
                 key={item.id}
                 style={styles.gridCard}
                 onPress={() =>
-                  router.push({ pathname: "/event/[id]", params: { id: item.id } })
+                  router.push({
+                    pathname: "/event/[id]",
+                    params: { id: item.id },
+                  })
                 }
               >
                 <Image source={item.image_url} style={styles.gridImage} />
@@ -202,7 +235,6 @@ export default function HomeScreen() {
             ))}
           </View>
         )}
-
       </ScrollView>
     </View>
   );

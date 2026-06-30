@@ -187,14 +187,14 @@ export default function TicketsScreen() {
 
                 <View style={styles.actionRow}>
                   <View style={styles.actionLeft}>
-                    <TouchableOpacity style={styles.actionBtn}>
+                    {/* <TouchableOpacity style={styles.actionBtn}>
                       <MaterialIcons
                         name="download"
                         size={18}
                         color="#2563EB"
                       />
                       <Text style={styles.actionBtnPrimary}>Download</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <TouchableOpacity
                       style={styles.actionBtn}
                       onPress={() => handleShare(ticket)}
