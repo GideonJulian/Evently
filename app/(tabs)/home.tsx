@@ -18,6 +18,7 @@ import EventCardSkeleton, {
   NearbyTileSkeleton,
 } from "@/src/components/skeletons/EventCardSkeleton";
 import HeaderSkeleton from "@/src/components/skeletons/HeaderSkeleton";
+import { Header } from "@react-navigation/elements";
 
 const categories = ["All Events", "Music", "Art", "Tech", "Food", "Sport"];
 
@@ -74,49 +75,73 @@ export default function HomeScreen() {
             <Text style={styles.greeting}>Hello, {userName}! 👋</Text>
           )}
         </View>
-
-        <TouchableOpacity
-          style={styles.searchBox}
-          activeOpacity={0.8}
-          onPress={() => router.push("/search")}
-        >
-          <Ionicons
-            name="search"
-            size={20}
-            color="#888"
-            style={{ marginRight: 10 }}
-          />
-          <Text style={styles.searchPlaceholder}>
-            Search events, artists...
-          </Text>
-        </TouchableOpacity>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.chips}
-          contentContainerStyle={{ paddingRight: 16 }}
-        >
-          {categories.map((item) => (
-            <TouchableOpacity
-              key={item}
-              onPress={() => setActiveCategory(item)}
-              style={[
-                styles.chip,
-                activeCategory === item && styles.activeChip,
-              ]}
-            >
-              <Text
-                style={{
-                  color: activeCategory === item ? "#fff" : "#333",
-                  fontWeight: "600",
-                }}
+        {userLoading ? (
+          <View style={styles.searchBox}>
+            <HeaderSkeleton
+              width={20}
+              height={20}
+              borderRadius={10}
+              style={{ marginTop: 10 }}
+            />
+            <HeaderSkeleton width={160} height={16} borderRadius={4} />
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={styles.searchBox}
+            activeOpacity={0.8}
+            onPress={() => router.push("/search")}
+          >
+            <Ionicons
+              name="search"
+              size={20}
+              color="#888"
+              style={{ marginRight: 10 }}
+            />
+            <Text style={styles.searchPlaceholder}>
+              Search events, artists...
+            </Text>
+          </TouchableOpacity>
+        )}
+        {userLoading ? (
+          <View style={[styles.chips, { flexDirection: "row" }]}>
+            {[70, 60, 65, 55, 60].map((w, i) => (
+              <HeaderSkeleton
+                key={i}
+                width={w}
+                height={32}
+                borderRadius={20}
+                style={{ marginRight: 10 }}
+              />
+            ))}
+          </View>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.chips}
+            contentContainerStyle={{ paddingRight: 16 }}
+          >
+            {categories.map((item) => (
+              <TouchableOpacity
+                key={item}
+                onPress={() => setActiveCategory(item)}
+                style={[
+                  styles.chip,
+                  activeCategory === item && styles.activeChip,
+                ]}
               >
-                {item}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+                <Text
+                  style={{
+                    color: activeCategory === item ? "#fff" : "#333",
+                    fontWeight: "600",
+                  }}
+                >
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
       </View>
 
       {/* ── SCROLLABLE CONTENT ── */}
