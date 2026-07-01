@@ -8,9 +8,9 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import router from "expo-router";
+
 export default function EventDetailsScreen() {
   const { id } = useLocalSearchParams();
   return (
@@ -24,7 +24,7 @@ export default function EventDetailsScreen() {
             style={styles.heroImage}
           />
 
-          <TouchableOpacity style={styles.backBtn}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
             <MaterialIcons name="arrow-back" size={15} color="black" />
           </TouchableOpacity>
 

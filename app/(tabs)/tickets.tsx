@@ -96,9 +96,7 @@ export default function TicketsScreen() {
   };
 
   if (loading) {
-    return (
-  <Loader message="Loading Tickets..."/>
-    );
+    return <Loader message="Loading Tickets..." />;
   }
 
   return (
@@ -206,12 +204,12 @@ export default function TicketsScreen() {
 
                   <TouchableOpacity
                     style={styles.qrBtn}
-                          onPress={() =>
-                    router.push({
-                      pathname: "/ticket/[id]",
-                      params: { id: ticket.id },
-                    })
-                  }
+                    onPress={() =>
+                      router.push({
+                        pathname: "/ticket/[id]",
+                        params: { id: ticket.id },
+                      })
+                    }
                   >
                     <Text style={styles.qrBtnText}>View QR Code</Text>
                   </TouchableOpacity>
@@ -252,7 +250,7 @@ const styles = StyleSheet.create({
   // ── Header ──
   header: {
     paddingHorizontal: 20,
-    paddingTop: 16,
+    paddingTop: 20,
     paddingBottom: 12,
     backgroundColor: "#F8F7FA",
     borderBottomWidth: 1,

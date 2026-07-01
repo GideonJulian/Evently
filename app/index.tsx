@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { supabase } from "../src/lib/supabase";
+import { AuthService } from "@/src/services/auth.service";
 
 export default function Splash() {
   const logoScale = useRef(new Animated.Value(0.8)).current;
@@ -21,8 +22,8 @@ export default function Splash() {
 
   useEffect(() => {
     startAnimations();
-    init();
     // clearstorage()
+    init();
   }, []);
 
   const startAnimations = () => {
@@ -105,6 +106,7 @@ export default function Splash() {
       ]),
     ).start();
   };
+
   const clearstorage = async () => {
     try {
       await AsyncStorage.clear();
@@ -126,17 +128,29 @@ export default function Splash() {
 
       const isLoggedIn = !!session;
 
+      // ── Not seen onboarding yet — always show it first ──
       if (!hasSeenOnboarding) {
         router.replace("/onboarding");
         return;
       }
 
-      if (isLoggedIn) {
-        router.replace("/(tabs)/home");
+      // ── Not logged in — send to login ──
+      if (!isLoggedIn) {
+        router.replace("/(auth)/login");
         return;
       }
 
-      router.replace("/(auth)/login");
+      // ── Logged in — check role and route accordingly ──
+      const role = await AuthService.getCurrentUserRole();
+      console.log("USER ROLE >>>", role);
+
+    if (role?.trim().toLowerCase() === "admin") {
+  router.replace("/admin/(tabs)/dashboard");
+  return;
+}
+
+      // Default fallback — treat any non-admin role (or null/error) as a regular user
+      router.replace("/(tabs)/home");
     } catch (err) {
       console.log(err);
       router.replace("/onboarding");
