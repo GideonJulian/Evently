@@ -33,8 +33,7 @@ export const featuredEvents: Event[] = [
 
     created_at: "2026-05-01T10:00:00Z",
     updated_at: "2026-05-15T12:00:00Z",
-      distance: "1.2 km away",
-
+    distance: "1.2 km away",
   },
   {
     id: "2",
@@ -68,8 +67,7 @@ export const featuredEvents: Event[] = [
 
     created_at: "2026-05-03T10:00:00Z",
     updated_at: "2026-05-15T12:00:00Z",
-      distance: "1.2 km away",
-
+    distance: "1.2 km away",
   },
 ];
 
@@ -106,8 +104,7 @@ export const upcomingEvents: Event[] = [
 
     created_at: "2026-05-06T10:00:00Z",
     updated_at: "2026-05-15T12:00:00Z",
-      distance: "1.2 km away",
-
+    distance: "1.2 km away",
   },
   {
     id: "4",
@@ -141,8 +138,7 @@ export const upcomingEvents: Event[] = [
 
     created_at: "2026-05-08T10:00:00Z",
     updated_at: "2026-05-15T12:00:00Z",
-      distance: "1.2 km away",
-
+    distance: "1.2 km away",
   },
 ];
 
@@ -150,8 +146,7 @@ export const nearby: Event[] = [
   {
     id: "5",
     title: "Gourmet Street Food",
-    description:
-      "Taste delicious cuisines from the city's best food vendors.",
+    description: "Taste delicious cuisines from the city's best food vendors.",
     category: "Food",
     tags: ["Food", "Outdoor"],
 
@@ -179,8 +174,7 @@ export const nearby: Event[] = [
 
     created_at: "2026-05-10T10:00:00Z",
     updated_at: "2026-05-15T12:00:00Z",
-      distance: "1.2 km away",
-
+    distance: "1.2 km away",
   },
   {
     id: "6",
@@ -214,7 +208,6 @@ export const nearby: Event[] = [
 
     created_at: "2026-05-11T10:00:00Z",
     updated_at: "2026-05-15T12:00:00Z",
-      distance: "1.2 km away",
-
+    distance: "1.2 km away",
   },
 ];
