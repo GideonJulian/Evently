@@ -186,7 +186,6 @@ export default function SearchResultsScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
         >
-  
           {filtered.map((item) => (
             <TouchableOpacity
               key={item.id}
