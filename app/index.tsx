@@ -144,10 +144,10 @@ export default function Splash() {
       const role = await AuthService.getCurrentUserRole();
       console.log("USER ROLE >>>", role);
 
-    if (role?.trim().toLowerCase() === "admin") {
-  router.replace("/admin/(tabs)/dashboard");
-  return;
-}
+      if (role?.trim().toLowerCase() === "admin") {
+        router.replace("/admin/(tabs)/dashboard");
+        return;
+      }
 
       // Default fallback — treat any non-admin role (or null/error) as a regular user
       router.replace("/(tabs)/home");
