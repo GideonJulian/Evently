@@ -48,7 +48,10 @@ export default function SearchScreen() {
   const saveSearch = async (term: string) => {
     const trimmed = term.trim();
     if (!trimmed) return;
-    const updated = [trimmed, ...recentSearches.filter((s) => s !== trimmed)].slice(0, 8);
+    const updated = [
+      trimmed,
+      ...recentSearches.filter((s) => s !== trimmed),
+    ].slice(0, 8);
     setRecentSearches(updated);
     await AsyncStorage.setItem(RECENT_KEY, JSON.stringify(updated));
   };
@@ -84,14 +87,22 @@ export default function SearchScreen() {
       {/* ── Header ── */}
       <View style={styles.header}>
         <Text style={styles.title}>Search</Text>
-        <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <Ionicons name="close" size={26} color="#222" />
         </TouchableOpacity>
       </View>
 
       {/* ── Search Input ── */}
       <View style={styles.searchBox}>
-        <Ionicons name="search" size={20} color="#555" style={{ marginRight: 10 }} />
+        <Ionicons
+          name="search"
+          size={20}
+          color="#555"
+          style={{ marginRight: 10 }}
+        />
         <TextInput
           ref={inputRef}
           value={query}
@@ -109,8 +120,10 @@ export default function SearchScreen() {
         )}
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
         {/* ── Recent ── */}
         {recentSearches.length > 0 && (
           <View style={styles.section}>
@@ -128,11 +141,23 @@ export default function SearchScreen() {
                 onPress={() => handleTrendingPress(item)}
               >
                 <View style={styles.rowLeft}>
-                  <Ionicons name="time-outline" size={22} color="#555" style={styles.rowIcon} />
+                  <Ionicons
+                    name="time-outline"
+                    size={22}
+                    color="#555"
+                    style={styles.rowIcon}
+                  />
                   <Text style={styles.rowText}>{item}</Text>
                 </View>
-                <TouchableOpacity onPress={() => removeRecent(item)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-                  <Ionicons name="close-circle-outline" size={22} color="#555" />
+                <TouchableOpacity
+                  onPress={() => removeRecent(item)}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Ionicons
+                    name="close-circle-outline"
+                    size={22}
+                    color="#555"
+                  />
                 </TouchableOpacity>
               </TouchableOpacity>
             ))}
@@ -152,14 +177,18 @@ export default function SearchScreen() {
               onPress={() => handleTrendingPress(item)}
             >
               <View style={styles.rowLeft}>
-                <Ionicons name="search-outline" size={22} color="#555" style={styles.rowIcon} />
+                <Ionicons
+                  name="search-outline"
+                  size={22}
+                  color="#555"
+                  style={styles.rowIcon}
+                />
                 <Text style={styles.rowText}>{item}</Text>
               </View>
               <Ionicons name="trending-up" size={20} color="#222" />
             </TouchableOpacity>
           ))}
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
