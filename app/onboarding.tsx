@@ -64,10 +64,10 @@ export default function OnboardingScreen() {
     });
   };
 
-  const handleSkip = () => { 
+  const handleSkip = () => {
     completeOnboarding();
-    console.log('complete')
-  }
+    console.log("complete");
+  };
   const compeleteOnboarding = async () => {
     await AsyncStorage.setItem("hasSeenOnboarding", "true");
     router.replace("/(auth)/login");
