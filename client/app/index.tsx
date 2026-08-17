@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Animated, Easing } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import { authService } from "../src/services/authService";
 
 export default function Splash() {
   const logoScale = useRef(new Animated.Value(0.8)).current;
@@ -21,6 +20,7 @@ export default function Splash() {
 
   useEffect(() => {
     startAnimations();
+    // clearstorage()
     init();
   }, []);
 
@@ -105,20 +105,19 @@ export default function Splash() {
     ).start();
   };
 
+  const clearstorage = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log("AsyncStorage cleared successfully.");
+    } catch (error) {
+      console.error("Error clearing AsyncStorage:", error);
+    }
+  };
+
   const init = async () => {
     await new Promise((resolve) => setTimeout(resolve, 4000));
 
     try {
-      const user = await authService.getStoredUser();
-      if (user) {
-        router.replace(
-          user.role === "admin"
-            ? "/admin/(tabs)/dashboard"
-            : "/(tabs)/home"
-        );
-        return;
-      }
-
       const hasSeenOnboarding = await AsyncStorage.getItem("hasSeenOnboarding");
 
       if (!hasSeenOnboarding) {
