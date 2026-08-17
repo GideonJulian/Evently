@@ -1,45 +1,34 @@
-// src/types/event.ts
-
 export interface Event {
-  id: string;
-
-  // Basic Info
+  _id: string;
   title: string;
   description: string;
-  category: string;
-  tags: string[];
-
-  // Images
-  image_url: string;
-
-  // Organizer
-  organizer_id: string;
-  organizer_name: string;
-  organizer_avatar: string;
-
-  // Location
+  date: string;
+  time: string;
   location: string;
-  address: string;
-  latitude: number;
-  longitude: number;
+  image?: string;
+  ticketPrice: number;
+  totalTickets: number;
+  availableTickets: number;
+  createdBy: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
 
-  // Date & Time
-  event_date: string;
-  start_time: string;
-  end_time: string;
-
-  // Tickets
-  ticket_price: number;
-  total_tickets: number;
-  tickets_remaining: number;
-
-  // Status
-  status: "draft" | "published" | "cancelled";
-
-  // Extra
-  is_featured: boolean;
-  created_at: string;
-  updated_at: string;
-
-  distance?: string;
+export interface Ticket {
+  _id: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  event: Event;
+  quantity: number;
+  totalAmount: number;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  createdAt: string;
+  updatedAt: string;
 }

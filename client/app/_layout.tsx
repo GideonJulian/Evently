@@ -9,6 +9,7 @@ import {
   Inter_700Bold,
   Inter_800ExtraBold,
 } from "@expo-google-fonts/inter";
+import { AuthProvider } from "../src/context/AuthContext";
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -38,5 +39,9 @@ export default function RootLayout() {
     return null;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <AuthProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </AuthProvider>
+  );
 }

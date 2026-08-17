@@ -8,47 +8,47 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  Alert,
 } from "react-native";
 
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-// import { supabase } from "../../src/lib/supabase";
+import { useAuth } from "../../src/context/AuthContext";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
-  // const handleLogin = async () => {
-  //   if (!email || !password) return;
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Validation Error", "Please enter email and password");
+      return;
+    }
 
-  //   try {
-  //     setLoading(true);
+    try {
+      setLoading(true);
+      const response = await login(email, password);
 
-  //     const { data, error } = await supabase.auth.signInWithPassword({
-  //       email,
-  //       password,
-  //     });
+      if (response.success) {
+        router.replace(
+          response.user?.role === "admin"
+            ? "/admin/(tabs)/dashboard"
+            : "/(tabs)/home"
+        );
+      } else {
+        Alert.alert("Login Failed", response.error || "Unable to login");
+      }
+    } catch (err) {
+      Alert.alert("Error", "An unexpected error occurred");
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  //     if (error) {
-  //       console.log("Login error:", error.message);
-  //       return;
-  //     }
-
-  //     if (data.session) {
-  //       router.replace("/(tabs)/home");
-  //     }
-  //   } catch (err) {
-  //     console.log("Unexpected error:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // dncKDwA71wMohmOR
-
-  // https://cjmbxizvwtbkmndiemxk.supabase.co/rest/v1/id
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.wrapper}>
@@ -78,6 +78,7 @@ export default function LoginScreen() {
               placeholder="name@example.com"
               keyboardType="email-address"
               autoCapitalize="none"
+              editable={!loading}
               style={styles.input}
             />
           </View>
@@ -100,6 +101,7 @@ export default function LoginScreen() {
                 onChangeText={setPassword}
                 placeholder="••••••••"
                 secureTextEntry={!showPassword}
+                editable={!loading}
                 style={[styles.input, { flex: 1 }]}
               />
 
@@ -118,7 +120,7 @@ export default function LoginScreen() {
           {/* Login Button */}
           <TouchableOpacity
             style={styles.button}
-            // onPress={handleLogin}
+            onPress={handleLogin}
             disabled={loading}
           >
             <Text style={styles.buttonText}>

@@ -8,16 +8,32 @@ import {
   StyleSheet,
   Dimensions,
   SafeAreaView,
-  Alert,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 const { width, height } = Dimensions.get("window");
+
+type Slide =
+  | {
+      id: number;
+      type: "custom";
+      title: string;
+      description: string;
+    }
+  | {
+      id: number;
+      type?: undefined;
+      title: string;
+      description: string;
+      image: string;
+    };
 
 /* -------------------- SLIDES -------------------- */
 
-export const slides = [
+export const slides: Slide[] = [
   {
     id: 1,
     title: "Discover Amazing Events",
@@ -44,7 +60,7 @@ export const slides = [
 /* -------------------- MAIN SCREEN -------------------- */
 
 export default function OnboardingScreen() {
-  const flatListRef = useRef<FlatList>(null);
+  const flatListRef = useRef<FlatList<Slide> | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const completeOnboarding = async () => {
@@ -68,10 +84,7 @@ export default function OnboardingScreen() {
     completeOnboarding();
     console.log("complete");
   };
-  const compeleteOnboarding = async () => {
-    await AsyncStorage.setItem("hasSeenOnboarding", "true");
-    router.replace("/(auth)/login");
-  };
+
   /* -------------------- CUSTOM SLIDE UI -------------------- */
 
   const renderHtmlSlide = () => {
@@ -187,11 +200,11 @@ export default function OnboardingScreen() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
-        onMomentumScrollEnd={(event) => {
+        onMomentumScrollEnd={(event: NativeSyntheticEvent<NativeScrollEvent>) => {
           const index = Math.round(event.nativeEvent.contentOffset.x / width);
           setCurrentIndex(index);
         }}
-        renderItem={({ item }) => (
+        renderItem={({ item }: { item: Slide }) => (
           <View style={styles.slide}>
             {item.type === "custom" ? (
               renderHtmlSlide()

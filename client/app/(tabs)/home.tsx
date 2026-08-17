@@ -11,58 +11,58 @@ import {
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 import { router } from "expo-router";
-import { featuredEvents, upcomingEvents, nearby } from "@/src/data/events";
-
 import EventCardSkeleton, {
   UpcomingRowSkeleton,
   NearbyTileSkeleton,
 } from "@/src/components/skeletons/EventCardSkeleton";
-import HeaderSkeleton from "@/src/components/skeletons/HeaderSkeleton";
-import { Header } from "@react-navigation/elements";
+import { useAuth } from "@/src/context/AuthContext";
+import { eventService } from "@/src/services/eventService";
+import { Event } from "@/src/types/event";
 
 const categories = ["All Events", "Music", "Art", "Tech", "Food", "Sport"];
 
 export default function HomeScreen() {
+  const { user, isAuthenticated } = useAuth();
   const [activeCategory, setActiveCategory] = useState("All Events");
-  const [userName, setUserName] = useState("User");
   const [loading, setLoading] = useState(true);
-  const [events, setEvents] = useState<any[]>([]);
-  const [userLoading, setUserLoading] = useState(false);
-  const filteredFeatured = featuredEvents.filter(
-    (event) =>
-      activeCategory === "All Events" || event.category === activeCategory,
-  );
-  const filteredUpcoming = upcomingEvents.filter(
-    (event) =>
-      activeCategory === "All Events" || event.category === activeCategory,
-  );
-  const filteredNearby = nearby.filter(
-    (event) =>
-      activeCategory === "All Events" || event.category === activeCategory,
-  );
+  const [events, setEvents] = useState<Event[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // getUser();
+    // Redirect if not authenticated
+    if (!isAuthenticated) {
+      router.replace("/(auth)/login");
+      return;
+    }
+
     loadEvents();
-     
-  }, []);
-
-  // const getUser = async () => {
-  //   setUserLoading(true);
-  //   const { data } = await supabase.auth.getUser();
-  //   const user = data?.user;
-  //   if (user?.user_metadata?.full_name) {
-  //     setUserName(user.user_metadata.full_name);
-  //   }
-
-  //   setUserLoading(false);
-  // };
+  }, [isAuthenticated]);
 
   const loadEvents = async () => {
     setLoading(true);
-    // const data = await EventService.getEvents();
-    // setEvents(data);
-    setLoading(false);
+    setError(null);
+    try {
+      const response = await eventService.getAllEvents();
+      if (response.success && response.data) {
+        setEvents(response.data);
+      } else {
+        setError(response.error || "Failed to load events");
+      }
+    } catch (err) {
+      console.error("Error loading events:", err);
+      setError("An error occurred while loading events");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (date: string, time: string) => {
+    try {
+      const d = new Date(date);
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    } catch {
+      return date;
+    }
   };
 
   return (
@@ -70,79 +70,51 @@ export default function HomeScreen() {
       {/* ── FIXED HEADER ── */}
       <View style={styles.header}>
         <View style={styles.greetingWrapper}>
-          {userLoading ? (
-            <HeaderSkeleton width={180} height={26} borderRadius={6} />
-          ) : (
-            <Text style={styles.greeting}>Hello, {userName}! 👋</Text>
-          )}
+          <Text style={styles.greeting}>
+            Hello, {user?.name || "User"}! 👋
+          </Text>
         </View>
-        {userLoading ? (
-          <View style={styles.searchBox}>
-            <HeaderSkeleton
-              width={20}
-              height={20}
-              borderRadius={10}
-              style={{ marginTop: 10 }}
-            />
-            <HeaderSkeleton width={160} height={16} borderRadius={4} />
-          </View>
-        ) : (
-          <TouchableOpacity
-            style={styles.searchBox}
-            activeOpacity={0.8}
-            onPress={() => router.push("/search")}
-          >
-            <Ionicons
-              name="search"
-              size={20}
-              color="#888"
-              style={{ marginRight: 10 }}
-            />
-            <Text style={styles.searchPlaceholder}>
-              Search events, artists...
-            </Text>
-          </TouchableOpacity>
-        )}
-        {userLoading ? (
-          <View style={[styles.chips, { flexDirection: "row" }]}>
-            {[70, 60, 65, 55, 60].map((w, i) => (
-              <HeaderSkeleton
-                key={i}
-                width={w}
-                height={32}
-                borderRadius={20}
-                style={{ marginRight: 10 }}
-              />
-            ))}
-          </View>
-        ) : (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.chips}
-            contentContainerStyle={{ paddingRight: 16 }}
-          >
-            {categories.map((item) => (
-              <TouchableOpacity
-                key={item}
-                onPress={() => setActiveCategory(item)}
-                style={[
-                  styles.chip,
-                  activeCategory === item && styles.activeChip,
-                ]}
+
+        <TouchableOpacity
+          style={styles.searchBox}
+          activeOpacity={0.8}
+          onPress={() => router.push("/search")}
+        >
+          <Ionicons
+            name="search"
+            size={20}
+            color="#888"
+            style={{ marginRight: 10 }}
+          />
+          <Text style={styles.searchPlaceholder}>Search events, artists...</Text>
+        </TouchableOpacity>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.chips}
+          contentContainerStyle={{ paddingRight: 16 }}
+        >
+          {categories.map((item) => (
+            <TouchableOpacity
+              key={item}
+              onPress={() => setActiveCategory(item)}
+              style={[
+                styles.chip,
+                activeCategory === item && styles.activeChip,
+              ]}
+            >
+              <Text
+                style={{
+                  color: activeCategory === item ? "#fff" : "#333",
+                  fontWeight: "600",
+                }}
               >
-                <Text
-                  style={{
-                    color: activeCategory === item ? "#fff" : "#333",
-                    fontWeight: "600",
-                  }}
-                >
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        )}
+                {item}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </View>
 
       {/* ── SCROLLABLE CONTENT ── */}
@@ -150,9 +122,21 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+            <TouchableOpacity
+              style={styles.retryButton}
+              onPress={loadEvents}
+            >
+              <Text style={styles.retryText}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* ── Featured ── */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Featured</Text>
+          <Text style={styles.sectionTitle}>Featured Events</Text>
         </View>
 
         {loading ? (
@@ -166,12 +150,12 @@ export default function HomeScreen() {
               <EventCardSkeleton key={key} />
             ))}
           </ScrollView>
-        ) : (
+        ) : events.length > 0 ? (
           <FlatList
-            data={filteredFeatured}
+            data={events}
             horizontal
             showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item._id}
             contentContainerStyle={{ paddingHorizontal: 16 }}
             scrollEnabled
             renderItem={({ item }) => (
@@ -180,15 +164,19 @@ export default function HomeScreen() {
                 onPress={() =>
                   router.push({
                     pathname: "/event/[id]",
-                    params: { id: item.id },
+                    params: { id: item._id },
                   })
                 }
               >
-                <Image source={item.image_url} style={styles.cardImage} />
-                {/* <Image source={{ uri: item.image_url }} style={styles.cardImage} /> */}
+                {item.image && (
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.cardImage}
+                  />
+                )}
                 <View style={styles.dateTag}>
                   <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                    {item.event_date}
+                    {formatDate(item.date, item.time)}
                   </Text>
                 </View>
                 <View style={{ padding: 10 }}>
@@ -198,40 +186,50 @@ export default function HomeScreen() {
               </TouchableOpacity>
             )}
           />
+        ) : (
+          <Text style={styles.emptyText}>No events available</Text>
         )}
 
-        {/* ── Upcoming ── */}
+        {/* ── Upcoming Events ── */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Upcoming</Text>
+          <Text style={styles.sectionTitle}>Upcoming Events</Text>
         </View>
 
-        {loading
-          ? [1, 2, 3].map((key) => <UpcomingRowSkeleton key={key} />)
-          : filteredUpcoming.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.listItem}
-                onPress={() =>
-                  router.push({
-                    pathname: "/event/[id]",
-                    params: { id: item.id },
-                  })
-                }
-              >
-                <Image source={item.image_url} style={styles.listImage} />
-                {/* <Image source={{ uri: item.image_url }} style={styles.listImage} /> */}
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.time}>{item.start_time}</Text>
-                  <Text style={styles.listTitle}>{item.title}</Text>
-                  <Text style={styles.listSub}>{item.location}</Text>
-                </View>
-                <MaterialIcons name="favorite-border" size={20} color="#888" />
-              </TouchableOpacity>
-            ))}
+        {loading ? (
+          [1, 2, 3].map((key) => <UpcomingRowSkeleton key={key} />)
+        ) : events.length > 0 ? (
+          events.map((item) => (
+            <TouchableOpacity
+              key={item._id}
+              style={styles.listItem}
+              onPress={() =>
+                router.push({
+                  pathname: "/event/[id]",
+                  params: { id: item._id },
+                })
+              }
+            >
+              {item.image && (
+                <Image
+                  source={{ uri: item.image }}
+                  style={styles.listImage}
+                />
+              )}
+              <View style={{ flex: 1 }}>
+                <Text style={styles.time}>{item.time}</Text>
+                <Text style={styles.listTitle}>{item.title}</Text>
+                <Text style={styles.listSub}>{item.location}</Text>
+              </View>
+              <MaterialIcons name="favorite-border" size={20} color="#888" />
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={styles.emptyText}>No events available</Text>
+        )}
 
-        {/* ── Nearby ── */}
+        {/* ── All Events Grid ── */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Nearby</Text>
+          <Text style={styles.sectionTitle}>All Events</Text>
         </View>
 
         {loading ? (
@@ -240,31 +238,239 @@ export default function HomeScreen() {
               <NearbyTileSkeleton key={key} />
             ))}
           </View>
-        ) : (
+        ) : events.length > 0 ? (
           <View style={styles.grid}>
-            {filteredNearby.map((item) => (
+            {events.slice(0, 4).map((item) => (
               <TouchableOpacity
-                key={item.id}
+                key={item._id}
                 style={styles.gridCard}
                 onPress={() =>
                   router.push({
                     pathname: "/event/[id]",
-                    params: { id: item.id },
+                    params: { id: item._id },
                   })
                 }
               >
-                <Image source={item.image_url} style={styles.gridImage} />
-                {/* <Image source={{ uri: item.image_url }} style={styles.gridImage} /> */}
+                {item.image && (
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.gridImage}
+                  />
+                )}
                 <Text style={styles.gridTitle}>{item.title}</Text>
-                <Text style={styles.gridSub}>{item.distance}</Text>
+                <Text style={styles.gridSub}>{item.location}</Text>
               </TouchableOpacity>
             ))}
           </View>
+        ) : (
+          <Text style={styles.emptyText}>No events available</Text>
         )}
       </ScrollView>
     </View>
   );
 }
+
+// const unusedLegacyHomeScreen = String.raw`
+//   return (
+//     <View style={styles.container}>
+//       {/* ── FIXED HEADER ── */}
+//       <View style={styles.header}>
+//         <View style={styles.greetingWrapper}>
+//           {userLoading ? (
+//             <HeaderSkeleton width={180} height={26} borderRadius={6} />
+//           ) : (
+//             <Text style={styles.greeting}>Hello, {userName}! 👋</Text>
+//           )}
+//         </View>
+//         {userLoading ? (
+//           <View style={styles.searchBox}>
+//             <HeaderSkeleton
+//               width={20}
+//               height={20}
+//               borderRadius={10}
+//               style={{ marginTop: 10 }}
+//             />
+//             <HeaderSkeleton width={160} height={16} borderRadius={4} />
+//           </View>
+//         ) : (
+//           <TouchableOpacity
+//             style={styles.searchBox}
+//             activeOpacity={0.8}
+//             onPress={() => router.push("/search")}
+//           >
+//             <Ionicons
+//               name="search"
+//               size={20}
+//               color="#888"
+//               style={{ marginRight: 10 }}
+//             />
+//             <Text style={styles.searchPlaceholder}>
+//               Search events, artists...
+//             </Text>
+//           </TouchableOpacity>
+//         )}
+//         {userLoading ? (
+//           <View style={[styles.chips, { flexDirection: "row" }]}>
+//             {[70, 60, 65, 55, 60].map((w, i) => (
+//               <HeaderSkeleton
+//                 key={i}
+//                 width={w}
+//                 height={32}
+//                 borderRadius={20}
+//                 style={{ marginRight: 10 }}
+//               />
+//             ))}
+//           </View>
+//         ) : (
+//           <ScrollView
+//             horizontal
+//             showsHorizontalScrollIndicator={false}
+//             style={styles.chips}
+//             contentContainerStyle={{ paddingRight: 16 }}
+//           >
+//             {categories.map((item) => (
+//               <TouchableOpacity
+//                 key={item}
+//                 onPress={() => setActiveCategory(item)}
+//                 style={[
+//                   styles.chip,
+//                   activeCategory === item && styles.activeChip,
+//                 ]}
+//               >
+//                 <Text
+//                   style={{
+//                     color: activeCategory === item ? "#fff" : "#333",
+//                     fontWeight: "600",
+//                   }}
+//                 >
+//                   {item}
+//                 </Text>
+//               </TouchableOpacity>
+//             ))}
+//           </ScrollView>
+//         )}
+//       </View>
+
+//       {/* ── SCROLLABLE CONTENT ── */}
+//       <ScrollView
+//         showsVerticalScrollIndicator={false}
+//         contentContainerStyle={{ paddingBottom: 100 }}
+//       >
+//         {/* ── Featured ── */}
+//         <View style={styles.sectionHeader}>
+//           <Text style={styles.sectionTitle}>Featured</Text>
+//         </View>
+
+//         {loading ? (
+//           <ScrollView
+//             horizontal
+//             showsHorizontalScrollIndicator={false}
+//             contentContainerStyle={{ paddingHorizontal: 16 }}
+//             scrollEnabled={false}
+//           >
+//             {[1, 2, 3].map((key) => (
+//               <EventCardSkeleton key={key} />
+//             ))}
+//           </ScrollView>
+//         ) : (
+//           <FlatList
+//             data={filteredFeatured}
+//             horizontal
+//             showsHorizontalScrollIndicator={false}
+//             keyExtractor={(item) => item.id}
+//             contentContainerStyle={{ paddingHorizontal: 16 }}
+//             scrollEnabled
+//             renderItem={({ item }) => (
+//               <TouchableOpacity
+//                 style={styles.card}
+//                 onPress={() =>
+//                   router.push({
+//                     pathname: "/event/[id]",
+//                     params: { id: item.id },
+//                   })
+//                 }
+//               >
+//                 <Image source={item.image_url} style={styles.cardImage} />
+//                 {/* <Image source={{ uri: item.image_url }} style={styles.cardImage} /> */}
+//                 <View style={styles.dateTag}>
+//                   <Text style={{ color: "#fff", fontWeight: "bold" }}>
+//                     {item.event_date}
+//                   </Text>
+//                 </View>
+//                 <View style={{ padding: 10 }}>
+//                   <Text style={styles.cardTitle}>{item.title}</Text>
+//                   <Text style={styles.cardSub}>{item.location}</Text>
+//                 </View>
+//               </TouchableOpacity>
+//             )}
+//           />
+//         )}
+
+//         {/* ── Upcoming ── */}
+//         <View style={styles.sectionHeader}>
+//           <Text style={styles.sectionTitle}>Upcoming</Text>
+//         </View>
+
+//         {loading
+//           ? [1, 2, 3].map((key) => <UpcomingRowSkeleton key={key} />)
+//           : filteredUpcoming.map((item) => (
+//               <TouchableOpacity
+//                 key={item.id}
+//                 style={styles.listItem}
+//                 onPress={() =>
+//                   router.push({
+//                     pathname: "/event/[id]",
+//                     params: { id: item.id },
+//                   })
+//                 }
+//               >
+//                 <Image source={item.image_url} style={styles.listImage} />
+//                 {/* <Image source={{ uri: item.image_url }} style={styles.listImage} /> */}
+//                 <View style={{ flex: 1 }}>
+//                   <Text style={styles.time}>{item.start_time}</Text>
+//                   <Text style={styles.listTitle}>{item.title}</Text>
+//                   <Text style={styles.listSub}>{item.location}</Text>
+//                 </View>
+//                 <MaterialIcons name="favorite-border" size={20} color="#888" />
+//               </TouchableOpacity>
+//             ))}
+
+//         {/* ── Nearby ── */}
+//         <View style={styles.sectionHeader}>
+//           <Text style={styles.sectionTitle}>Nearby</Text>
+//         </View>
+
+//         {loading ? (
+//           <View style={styles.grid}>
+//             {[1, 2, 3, 4].map((key) => (
+//               <NearbyTileSkeleton key={key} />
+//             ))}
+//           </View>
+//         ) : (
+//           <View style={styles.grid}>
+//             {filteredNearby.map((item) => (
+//               <TouchableOpacity
+//                 key={item.id}
+//                 style={styles.gridCard}
+//                 onPress={() =>
+//                   router.push({
+//                     pathname: "/event/[id]",
+//                     params: { id: item.id },
+//                   })
+//                 }
+//               >
+//                 <Image source={item.image_url} style={styles.gridImage} />
+//                 {/* <Image source={{ uri: item.image_url }} style={styles.gridImage} /> */}
+//                 <Text style={styles.gridTitle}>{item.title}</Text>
+//                 <Text style={styles.gridSub}>{item.distance}</Text>
+//               </TouchableOpacity>
+//             ))}
+//           </View>
+//         )}
+//       </ScrollView>
+//     </View>
+//   );
+// }`;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F8F7FA" },
@@ -360,4 +566,39 @@ const styles = StyleSheet.create({
   gridImage: { width: "100%", height: 100, borderRadius: 12 },
   gridTitle: { fontWeight: "700", marginTop: 6 },
   gridSub: { color: "#666", fontSize: 12 },
+
+  errorContainer: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    padding: 16,
+    backgroundColor: "#FEE2E2",
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: "#DC2626",
+  },
+  errorText: {
+    color: "#991B1B",
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 12,
+  },
+  retryButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: "#DC2626",
+    borderRadius: 6,
+    alignSelf: "flex-start",
+  },
+  retryText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+
+  emptyText: {
+    textAlign: "center",
+    color: "#999",
+    fontSize: 16,
+    marginTop: 20,
+  },
 });

@@ -7,11 +7,12 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  Alert,
 } from "react-native";
 
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-
+import { useAuth } from "../../src/context/AuthContext";
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");
@@ -20,39 +21,45 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [agree, setAgree] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const handleRegister = async () => {
-  //   if (!email || !password || !name) return;
-  //   if (!agree) return;
+  const { register } = useAuth();
 
-  //   try {
-  //     setLoading(true);
+  const handleRegister = async () => {
+    if (!email || !password || !name) {
+      Alert.alert("Validation Error", "Please fill in all fields");
+      return;
+    }
 
-  //     const { data, error } = await supabase.auth.signUp({
-  //       email,  
-  //       password,
-  //       options: {
-  //         data: {
-  //           full_name: name,
-  //         },
-  //       },
-  //     });
+    if (!agree) {
+      Alert.alert("Validation Error", "Please agree to the terms");
+      return;
+    }
 
-  //     if (error) {
-  //       console.log("Register error:", error.message);
-  //       return;
-  //     }
+    if (password.length < 6) {
+      Alert.alert("Validation Error", "Password must be at least 6 characters");
+      return;
+    }
 
-  //     // IMPORTANT:
-  //     // Supabase may or may not auto-login depending on settings
-  //     if (data.user) {
-  //       router.replace("/(auth)/login");
-  //     }
-  //   } catch (err) {
-  //     console.log("Unexpected error:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+    try {
+      setLoading(true);
+      const response = await register(name, email, password);
+
+      if (response.success) {
+        Alert.alert("Success", "Account created successfully!");
+        router.replace(
+          response.user?.role === "admin"
+            ? "/admin/(tabs)/dashboard"
+            : "/(tabs)/home"
+        );
+      } else {
+        Alert.alert("Registration Failed", response.error || "Unable to register");
+      }
+    } catch (err) {
+      Alert.alert("Error", "An unexpected error occurred");
+      console.error("Register error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -75,6 +82,7 @@ export default function RegisterScreen() {
               value={name}
               onChangeText={setName}
               placeholder="John Doe"
+              editable={!loading}
               style={styles.input}
             />
           </View>
@@ -87,6 +95,8 @@ export default function RegisterScreen() {
               onChangeText={setEmail}
               placeholder="name@example.com"
               keyboardType="email-address"
+              autoCapitalize="none"
+              editable={!loading}
               style={styles.input}
             />
           </View>
@@ -101,6 +111,7 @@ export default function RegisterScreen() {
                 onChangeText={setPassword}
                 placeholder="••••••••"
                 secureTextEntry={!showPassword}
+                editable={!loading}
                 style={[styles.input, { flex: 1 }]}
               />
 
@@ -132,7 +143,7 @@ export default function RegisterScreen() {
           {/* BUTTON */}
           <TouchableOpacity
             style={[styles.button, (!agree || loading) && { opacity: 0.6 }]}
-            // onPress={handleRegister}
+            onPress={handleRegister}
             disabled={!agree || loading}
           >
             <Text style={styles.buttonText}>

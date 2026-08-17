@@ -1,11 +1,18 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import {
   Ionicons,
   MaterialIcons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+import { useAuth } from "../../../src/context/AuthContext";
 
 export default function AdminTabsLayout() {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) return null;
+  if (!user) return <Redirect href="/(auth)/login" />;
+  if (user.role !== "admin") return <Redirect href="/(tabs)/home" />;
+
   return (
     <Tabs
       screenOptions={{
