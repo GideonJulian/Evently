@@ -351,9 +351,9 @@ function TicketTypeButton({
         >
           {free ? "Free tickets" : "Paid tickets"}
         </Text>
-        <Text style={styles.ticketTypeHint}>
+        {/* <Text style={styles.ticketTypeHint}>
           {free ? "No charge for attendees" : "Set a price per ticket"}
-        </Text>
+        </Text> */}
       </View>
       <View style={[styles.radio, active && styles.radioActive]}>
         {active && <View style={styles.radioDot} />}
@@ -375,7 +375,7 @@ function Field({
     <View style={styles.field}>
       <Label>{label}</Label>
       <View style={styles.inputWrap}>
-        {prefix === "$" && <Text style={styles.currency}>$</Text>}
+        {prefix === "$" && <Text style={styles.currency}>₦</Text>}
         {prefix === "groups" && (
           <MaterialIcons
             name="groups"

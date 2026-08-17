@@ -33,13 +33,28 @@ const createEvent = async (req, res) => {
       req.body;
 
     // Validation
-    if (!title || !description || !date || !time || !location || !ticketPrice || !totalTickets) {
+    if (
+      !title ||
+      !description ||
+      !date ||
+      !time ||
+      !location ||
+      ticketPrice === undefined ||
+      ticketPrice === null ||
+      totalTickets === undefined ||
+      totalTickets === null
+    ) {
       return res
         .status(400)
         .json({ error: "Please provide all required fields" });
     }
 
-    if (ticketPrice < 0 || totalTickets < 1) {
+    if (
+      !Number.isFinite(ticketPrice) ||
+      !Number.isInteger(totalTickets) ||
+      ticketPrice < 0 ||
+      totalTickets < 1
+    ) {
       return res
         .status(400)
         .json({ error: "Invalid ticket price or total tickets" });
@@ -88,12 +103,26 @@ const updateEvent = async (req, res) => {
     if (time) event.time = time;
     if (location) event.location = location;
     if (image) event.image = image;
-    if (ticketPrice !== undefined) event.ticketPrice = ticketPrice;
+    if (ticketPrice !== undefined) {
+      if (!Number.isFinite(ticketPrice) || ticketPrice < 0) {
+        return res.status(400).json({ error: "Invalid ticket price" });
+      }
+      event.ticketPrice = ticketPrice;
+    }
     if (totalTickets !== undefined) {
-      event.totalTickets = totalTickets;
-      // Recalculate available tickets
+      if (!Number.isInteger(totalTickets) || totalTickets < 1) {
+        return res.status(400).json({ error: "Invalid ticket limit" });
+      }
+
       const soldTickets = event.totalTickets - event.availableTickets;
-      event.availableTickets = Math.max(0, totalTickets - soldTickets);
+      if (totalTickets < soldTickets) {
+        return res.status(400).json({
+          error: `Ticket limit cannot be less than ${soldTickets} tickets already sold`,
+        });
+      }
+
+      event.totalTickets = totalTickets;
+      event.availableTickets = totalTickets - soldTickets;
     }
 
     await event.save();
